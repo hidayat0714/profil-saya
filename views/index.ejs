@@ -1,0 +1,229 @@
+<%- include('partials/header', { halaman: halaman, aktif: aktif, profil: profil }) %>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="beranda">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <p class="hero-greeting">Halo, selamat datang! Saya biasa dipanggil <strong><%= profil.namaPanggilan %></strong> 👋</p>
+        <h1 class="hero-nama">Saya <span class="teks-hijau"><%= profil.nama %></span></h1>
+        <p class="hero-role"><%= profil.role %></p>
+        <p class="hero-tagline"><%= profil.tagline %></p>
+        <div class="hero-aksi">
+          <a href="#proyek" class="btn btn-hijau"><i class="fas fa-briefcase"></i> Lihat Proyek</a>
+          <a href="#kontak" class="btn btn-outline"><i class="fas fa-paper-plane"></i> Hubungi Saya</a>
+        </div>
+        <div class="hero-sosial">
+          <% profil.sosial.forEach(function(s) { %>
+            <a href="<%= s.url %>" aria-label="<%= s.nama %>"><i class="<%= s.icon %>"></i></a>
+          <% }) %>
+        </div>
+      </div>
+      <div class="hero-avatar">
+        <div class="avatar-box">
+          <img src="/images/foto-ajim.jpeg" alt="Foto <%= profil.nama %>" class="avatar-foto" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-inisial',textContent:'<%= profil.nama.split(' ').map(function(w){ return w[0] }).join('') %>'}))" />
+        </div>
+      </div>
+    </div>
+    <svg class="waves" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+      <path class="wave wave-1" d="M0,64 C240,120 480,0 720,40 C960,80 1200,10 1440,60 L1440,120 L0,120 Z"/>
+      <path class="wave wave-2" d="M0,90 C240,40 480,110 720,70 C960,30 1200,100 1440,60 L1440,120 L0,120 Z"/>
+    </svg>
+  </section>
+
+  <!-- ============ RINGKASAN ============ -->
+  <section class="section section-transparan" id="tentang">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-foto">
+          <div class="avatar-box">
+            <img src="/images/foto-ajim.jpeg" alt="Foto <%= profil.nama %>" class="avatar-foto" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-inisial',textContent:'<%= profil.nama.split(' ').map(function(w){ return w[0] }).join('') %>'}))" />
+          </div>
+        </div>
+        <div class="about-teks">
+          <h2>Halo, saya <%= profil.nama %> 👋</h2>
+          <p>
+            Saya <strong><%= profil.nama %></strong>, biasa dipanggil <strong><%= profil.namaPanggilan %></strong>.
+            Lahir di <strong><%= profil.ttl %></strong>. Seorang <strong><%= profil.role %></strong>
+            yang berdomisili di <%= profil.lokasi %>.
+          </p>
+          <p><%= profil.ringkasan %></p>
+          <ul class="about-info">
+            <li><i class="fas fa-user-circle"></i> <strong>Nama:</strong> <%= profil.nama %> (<%= profil.namaPanggilan %>)</li>
+            <li><i class="fas fa-calendar-alt"></i> <strong>TTL:</strong> <%= profil.ttl %></li>
+            <li><i class="fas fa-briefcase"></i> <strong>Posisi:</strong> <%= profil.role %></li>
+            <li><i class="fas fa-envelope"></i> <strong>Email:</strong> <%= profil.email %></li>
+            <li><i class="fas fa-map-marker-alt"></i> <strong>Lokasi:</strong> <%= profil.lokasi %></li>
+            <li><i class="fas fa-palette"></i> <strong>Warna Favorit:</strong> <%= profil.warnaFavorit %></li>
+            <li><i class="fas fa-fish"></i> <strong>Hobi:</strong> <%= profil.hobi.join(' • ') %></li>
+          </ul>
+          <a href="#kontak" class="btn btn-hijau"><i class="fas fa-paper-plane"></i> Hubungi Saya</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KEUNGGULAN ============ -->
+  <section class="section">
+    <div class="container">
+      <div class="bagian-judul">
+        <h2>Bidang Saya</h2>
+        <p>Apa yang saya tekuni.</p>
+      </div>
+      <div class="grid-kartu">
+        <div class="kartu">
+          <i class="fas fa-code kartu-ikon"></i>
+          <h3>Pengembangan Aplikasi</h3>
+          <p>Aplikasi mobile lintas platform dengan Flutter dan API backend menggunakan Node.js.</p>
+        </div>
+        <div class="kartu">
+          <i class="fas fa-leaf kartu-ikon"></i>
+          <h3>Smart Farming & IoT</h3>
+          <p>Teknologi IoT untuk budidaya jamur tiram dan pertanian yang efisien dan berkelanjutan.</p>
+        </div>
+        <div class="kartu">
+          <i class="fas fa-database kartu-ikon"></i>
+          <h3>Firebase & Database</h3>
+          <p>Realtime database, autentikasi, dan penyimpanan data terintegrasi dengan Firebase.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KEAHLIAN ============ -->
+  <section class="section" id="keahlian">
+    <div class="container">
+      <div class="bagian-judul">
+        <h2>Keahlian</h2>
+        <p>Beberapa teknologi yang saya kuasai.</p>
+      </div>
+      <div class="skill-list">
+        <% profil.keahlian.forEach(function(k) { %>
+          <div class="skill-item">
+            <div class="skill-info">
+              <span><%= k.nama %></span>
+              <span><%= k.level %>%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="width: <%= k.level %>%;"></div></div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PENDIDIKAN & PENGALAMAN ============ -->
+  <section class="section section-gelap" id="pendidikan">
+    <div class="container">
+      <div class="bagian-judul">
+        <h2>Riwayat Pendidikan</h2>
+        <p>Perjalanan pendidikan saya dari SD hingga kampus.</p>
+      </div>
+      <div class="timeline">
+        <% profil.pendidikan.forEach(function(p) { %>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content kartu">
+              <h3><%= p.nama %></h3>
+              <p class="timeline-periode"><i class="fas fa-graduation-cap"></i> <%= p.periode %></p>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+
+      <div class="bagian-judul bagian-judul-extra">
+        <h2>Pengalaman</h2>
+      </div>
+      <div class="grid-kartu">
+        <% profil.pengalaman.forEach(function(p) { %>
+          <div class="kartu">
+            <i class="fas fa-briefcase kartu-ikon"></i>
+            <p class="timeline-periode"><i class="fas fa-clock"></i> <%= p.periode %></p>
+            <h3><%= p.judul %></h3>
+            <p><%= p.deskripsi %></p>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROYEK ============ -->
+  <section class="section" id="proyek">
+    <div class="container">
+      <div class="bagian-judul">
+        <h2>Proyek</h2>
+        <p>Beberapa proyek yang pernah saya kerjakan — termasuk tugas akhir berbasis IoT.</p>
+      </div>
+      <div class="proyek-grid">
+        <% profil.proyek.forEach(function(p, i) { %>
+          <div class="kartu proyek-kartu">
+            <div class="proyek-ikon"><i class="fas fa-rocket"></i></div>
+            <div class="proyek-badge"><%= String(i + 1).padStart(2, '0') %></div>
+            <h3><%= p.nama %></h3>
+            <p><%= p.deskripsi %></p>
+            <div class="tech-tags">
+              <% p.teknologi.forEach(function(t) { %>
+                <span class="tag"><%= t %></span>
+              <% }) %>
+            </div>
+            <% if (p.download) { %>
+              <a href="<%= p.link %>" download class="btn btn-hijau btn-kecil"><i class="fas fa-download"></i> Download APK</a>
+            <% } else { %>
+              <a href="<%= p.link %>" class="btn btn-hijau btn-kecil"><i class="fas fa-arrow-right"></i> Detail</a>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KONTAK ============ -->
+  <section class="section section-gelap section-kontak" id="kontak">
+    <div class="container">
+      <div class="bagian-judul">
+        <h2>Kontak</h2>
+        <p>Punya pertanyaan atau tawaran kerja sama? Kirim pesan di bawah ini.</p>
+      </div>
+      <% if (pesan) { %>
+        <div class="alert alert-<%= pesan.tipe %>">
+          <i class="fas fa-<%= pesan.tipe === 'sukses' ? 'check-circle' : 'exclamation-circle' %>"></i>
+          <%= pesan.teks %>
+        </div>
+      <% } %>
+      <div class="kontak-grid">
+        <div class="kontak-info">
+          <h2>Informasi Kontak</h2>
+          <p>Isi formulir atau hubungi saya melalui media berikut:</p>
+          <ul class="kontak-list">
+            <li><i class="fas fa-user-circle"></i> <strong><%= profil.nama %></strong></li>
+            <li><i class="fas fa-envelope"></i> <a href="mailto:<%= profil.email %>"><%= profil.email %></a></li>
+            <li><i class="fas fa-map-marker-alt"></i> <%= profil.lokasi %></li>
+          </ul>
+          <div class="hero-sosial">
+            <% profil.sosial.forEach(function(s) { %>
+              <a href="<%= s.url %>" aria-label="<%= s.nama %>"><i class="<%= s.icon %>"></i></a>
+            <% }) %>
+          </div>
+        </div>
+        <form action="/kontak" method="POST" class="form-kontak" id="formKontak">
+          <div class="form-group">
+            <label for="nama">Nama Lengkap</label>
+            <input type="text" id="nama" name="nama" placeholder="Nama Anda" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="nama@email.com" required />
+          </div>
+          <div class="form-group">
+            <label for="subjek">Subjek</label>
+            <input type="text" id="subjek" name="subjek" placeholder="Subjek pesan" />
+          </div>
+          <div class="form-group">
+            <label for="isi">Pesan</label>
+            <textarea id="isi" name="isi" rows="5" placeholder="Tulis pesan Anda..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-hijau btn-lebar"><i class="fas fa-paper-plane"></i> Kirim Pesan</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+<%- include('partials/footer') %>

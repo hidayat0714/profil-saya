@@ -1,0 +1,14 @@
+</main>
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>© <span id="tahun"></span> <%= profil.nama %> — Dibuat dengan <i class="fas fa-heart"></i> menggunakan Node.js, Express &amp; EJS.</p>
+      <div class="footer-sosial">
+        <% profil.sosial.forEach(function(s) { %>
+          <a href="<%= s.url %>" aria-label="<%= s.nama %>"><i class="<%= s.icon %>"></i></a>
+        <% }) %>
+      </div>
+    </div>
+  </footer>
+  <script src="/js/main.js"></script>
+</body>
+</html>

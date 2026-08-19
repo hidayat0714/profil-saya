@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= halaman %> | <%= profil.nama %></title>
+  <meta name="description" content="<%= profil.role %> — <%= profil.tagline %>" />
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <header class="navbar" id="navbar">
+    <a href="#beranda" class="logo">
+      <span class="logo-badge">MH</span>
+      <span class="logo-text"><%= profil.nama %></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Buka menu">
+      <i class="fas fa-bars"></i>
+    </button>
+    <nav class="nav-menu" id="navMenu">
+      <a href="#beranda" class="<%= aktif === 'beranda' ? 'active' : '' %>"><i class="fas fa-home"></i> Beranda</a>
+      <a href="#tentang" class="<%= aktif === 'tentang' ? 'active' : '' %>"><i class="fas fa-user"></i> Tentang</a>
+      <a href="#keahlian" class="<%= aktif === 'keahlian' ? 'active' : '' %>"><i class="fas fa-chart-bar"></i> Keahlian</a>
+      <a href="#proyek" class="<%= aktif === 'proyek' ? 'active' : '' %>"><i class="fas fa-briefcase"></i> Proyek</a>
+      <a href="#kontak" class="<%= aktif === 'kontak' ? 'active' : '' %>"><i class="fas fa-envelope"></i> Kontak</a>
+    </nav>
+  </header>
+  <main>

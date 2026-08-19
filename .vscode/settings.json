@@ -1,0 +1,11 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "files.associations": {
+    "*.ejs": "html"
+  },
+  "eslint.validate": ["javascript"],
+  "liveServer.settings.port": 5501,
+  "liveServer.settings.donotShowInfoMsg": true
+}
