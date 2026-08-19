@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const admin = require('firebase-admin');
+const { getDatabase } = require('firebase-admin/database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,21 +16,24 @@ const MESSAGES_FILE = path.join(DATA_DIR, 'messages.json');
 
 // Firebase untuk menyimpan pesan kontak secara persisten (online).
 // Jika env FIREBASE_SA tidak ada (localhost), fallback ke file lokal.
+// Catatan: firebase-admin v14 mengekspor 'cert' di top-level dan 'getDatabase'
+// dari subpath 'firebase-admin/database'.
 let db = null;
+let firebaseApp = null;
 try {
   if (process.env.FIREBASE_SA) {
     const sa = JSON.parse(Buffer.from(process.env.FIREBASE_SA, 'base64').toString('utf-8'));
-    admin.initializeApp({
-      credential: admin.credential.cert(sa),
+    firebaseApp = admin.initializeApp({
+      credential: admin.cert(sa),
       databaseURL: 'https://myceliasuhu-default-rtdb.asia-southeast1.firebasedatabase.app',
     });
-    db = admin.database();
+    db = getDatabase(firebaseApp);
   } else if (fs.existsSync(path.join(__dirname, 'service-account.json'))) {
-    admin.initializeApp({
-      credential: admin.credential.cert(path.join(__dirname, 'service-account.json')),
+    firebaseApp = admin.initializeApp({
+      credential: admin.cert(path.join(__dirname, 'service-account.json')),
       databaseURL: 'https://myceliasuhu-default-rtdb.asia-southeast1.firebasedatabase.app',
     });
-    db = admin.database();
+    db = getDatabase(firebaseApp);
   }
 } catch (e) {
   console.error('Firebase init error:', e.message);
