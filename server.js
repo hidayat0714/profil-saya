@@ -6,6 +6,10 @@ const admin = require('firebase-admin');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// NOTE: Pengaturan aplikasi, rute, dan export 'app' ada di bawah.
+// Di Vercel, file ini menjadi entrypoint function; app diexport sebagai default.
+// Saat dijalankan lokal (node server.js), app.listen() dipanggil secara manual.
+
 const DATA_DIR = path.join(__dirname, 'data');
 const MESSAGES_FILE = path.join(DATA_DIR, 'messages.json');
 
@@ -31,7 +35,16 @@ try {
   console.error('Firebase init error:', e.message);
 }
 
-app.use(express.static(path.join(__dirname, 'public')));
+// --- Ekspor app untuk Vercel (serverless function). Di Vercel, folder
+// 'public/' otomatis disajikan sebagai aset statis oleh CDN, jadi kita
+// hapus express.static (tidak berfungsi di Vercel) dan biarkan Vercel
+// menanganinya. Untuk dev lokal, tetap pakai express.static.
+const IS_VERCEL = process.env.VERCEL === '1';
+
+if (!IS_VERCEL) {
+  app.use(express.static(path.join(__dirname, 'public')));
+}
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -134,8 +147,13 @@ function bacaMessages() {
 }
 
 function simpanMessages(messages) {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(MESSAGES_FILE, JSON.stringify(messages, null, 2), 'utf-8');
+  try {
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.writeFileSync(MESSAGES_FILE, JSON.stringify(messages, null, 2), 'utf-8');
+  } catch (e) {
+    console.error('Gagal menulis pesan ke file (biasanya di lingkungan serverless):', e.message);
+    throw e;
+  }
 }
 
 function bacaMessagesAsync() {
@@ -241,6 +259,12 @@ app.use((req, res) => {
   res.status(404).render('404', { halaman: '404', aktif: '', profil: profilData });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server profil berjalan di http://localhost:${PORT}`);
-});
+// Di Vercel: export app sebagai default (module.exports).
+// Saat lokal: panggil app.listen().
+if (process.env.VERCEL === '1') {
+  module.exports = app;
+} else {
+  app.listen(PORT, () => {
+    console.log(`Server profil berjalan di http://localhost:${PORT}`);
+  });
+}
