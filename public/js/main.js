@@ -1,197 +1,138 @@
-document.addEventListener('DOMContentLoaded', function () {
-  // Tahun otomatis di footer
-  var tahunEl = document.getElementById('tahun');
-  if (tahunEl) {
-    tahunEl.textContent = new Date().getFullYear();
+/* =========================================================
+   Modern Developer Portfolio — main.js
+   Tema, navbar, menu, scrollspy, reveal, modal, efek ketik
+   ========================================================= */
+(function () {
+  'use strict';
+
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Tema (dark default / light toggle) ---------- */
+  var root = document.documentElement;
+  var themeToggle = document.getElementById('themeToggle');
+
+  function setTheme(tema) {
+    root.setAttribute('data-theme', tema);
+    if (themeToggle) {
+      themeToggle.innerHTML = tema === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    try {
+      localStorage.setItem('tema', tema);
+    } catch (e) { /* abaikan */ }
   }
 
-  // Toggle menu mobile
+  var temaTersimpan = null;
+  try {
+    temaTersimpan = localStorage.getItem('tema');
+  } catch (e) { /* abaikan */ }
+
+  if (temaTersimpan === 'dark' || temaTersimpan === 'light') {
+    setTheme(temaTersimpan);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    setTheme('light');
+  } else {
+    setTheme('dark');
+  }
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function () {
+      setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  /* ---------- Navbar: latar saat scroll ---------- */
+  var navbar = document.getElementById('navbar');
+  var scrolled = false;
+
+  function cekScroll() {
+    var y = window.scrollY || window.pageYOffset;
+    if (y > 24 && !scrolled) {
+      navbar.classList.add('scrolled');
+      scrolled = true;
+    } else if (y <= 24 && scrolled) {
+      navbar.classList.remove('scrolled');
+      scrolled = false;
+    }
+  }
+  cekScroll();
+  window.addEventListener('scroll', cekScroll, { passive: true });
+
+  /* ---------- Menu mobile ---------- */
   var navToggle = document.getElementById('navToggle');
   var navMenu = document.getElementById('navMenu');
+
+  function tutupMenu() {
+    navMenu.classList.remove('buka');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+
   if (navToggle && navMenu) {
     navToggle.addEventListener('click', function () {
-      navMenu.classList.toggle('buka');
+      var buka = navMenu.classList.toggle('buka');
+      navToggle.setAttribute('aria-expanded', buka ? 'true' : 'false');
+      navToggle.innerHTML = buka ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
     });
+
     navMenu.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        navMenu.classList.remove('buka');
+      link.addEventListener('click', tutupMenu);
+    });
+
+    document.addEventListener('click', function (e) {
+      if (navMenu.classList.contains('buka') && !navMenu.contains(e.target) && e.target !== navToggle && !navToggle.contains(e.target)) {
+        tutupMenu();
+      }
+    });
+  }
+
+  /* ---------- Scrollspy: highlight link aktif ---------- */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  var sections = navLinks
+    .map(function (l) {
+      var id = l.getAttribute('href');
+      return id ? document.querySelector(id) : null;
+    })
+    .filter(Boolean);
+
+  var spyTimer = null;
+  function cekScrollspy() {
+    if (spyTimer) return;
+    spyTimer = setTimeout(function () {
+      var pos = (window.scrollY || 0) + 140;
+      var aktifId = 'beranda';
+      sections.forEach(function (s) {
+        if (s.offsetTop <= pos) aktifId = s.getAttribute('id');
       });
-    });
+      navLinks.forEach(function (l) {
+        l.classList.toggle('active', l.getAttribute('href') === '#' + aktifId);
+      });
+      spyTimer = null;
+    }, 80);
   }
+  window.addEventListener('scroll', cekScrollspy, { passive: true });
+  cekScrollspy();
 
-  // =========================================================
-  // Background partikel jaringan IoT (canvas)
-  // =========================================================
-  var canvas = document.getElementById('bg-canvas');
-  if (canvas) {
-    var ctx = canvas.getContext('2d');
-    var partikel = [];
-    var jumlahPartikel = window.innerWidth < 700 ? 40 : 80;
-    var mouse = { x: null, y: null };
+  /* ---------- Tahun otomatis footer ---------- */
+  var tahunEl = document.getElementById('tahun');
+  if (tahunEl) tahunEl.textContent = new Date().getFullYear();
 
-    function ukurCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = document.body.scrollHeight;
-    }
-
-    function sembunyikanKursor() {
-      var style = getComputedStyle(document.body);
-      var pointer = style.getPropertyValue('--pointer');
-    }
-
-    function buatPartikel() {
-      return {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: (Math.random() - 0.5) * 0.6,
-        r: Math.random() * 2 + 1,
-      };
-    }
-
-    function inisialisasi() {
-      ukurCanvas();
-      partikel = [];
-      for (var i = 0; i < jumlahPartikel; i++) {
-        partikel.push(buatPartikel());
-      }
-    }
-
-    function gambar() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      ctx.globalAlpha = 0.7;
-      ctx.fillStyle = '#4da3ff';
-      for (var i = 0; i < partikel.length; i++) {
-        var p = partikel[i];
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Garis penghubung antar partikel yang berdekatan (seperti jaringan sensor IoT)
-      ctx.strokeStyle = '#2f80ed';
-      ctx.globalAlpha = 0.18;
-      ctx.lineWidth = 1;
-      for (var i = 0; i < partikel.length; i++) {
-        for (var j = i + 1; j < partikel.length; j++) {
-          var a = partikel[i];
-          var b = partikel[j];
-          var dx = a.x - b.x;
-          var dy = a.y - b.y;
-          var jarak = dx * dx + dy * dy;
-          if (jarak < 12000) {
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      // Garis dari mouse ke partikel terdekat
-      if (mouse.x !== null) {
-        for (var i = 0; i < partikel.length; i++) {
-          var p = partikel[i];
-          var dx = p.x - mouse.x;
-          var dy = p.y - mouse.y;
-          var jarak = dx * dx + dy * dy;
-          if (jarak < 20000) {
-            ctx.globalAlpha = 0.35;
-            ctx.strokeStyle = '#4da3ff';
-            ctx.beginPath();
-            ctx.moveTo(mouse.x, mouse.y);
-            ctx.lineTo(p.x, p.y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      ctx.globalAlpha = 1;
-      requestAnimationFrame(gambar);
-    }
-
-    canvas.addEventListener('mousemove', function (e) {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY + window.scrollY;
-    });
-
-    canvas.addEventListener('mouseleave', function () {
-      mouse.x = null;
-      mouse.y = null;
-    });
-
-    window.addEventListener('resize', function () {
-      inisialisasi();
-    });
-
-    inisialisasi();
-    gambar();
-  }
-
-  // =========================================================
-  // Glow mengikuti mouse
-  // =========================================================
-  var glow = document.createElement('div');
-  glow.id = 'mouse-glow';
-  document.body.appendChild(glow);
-
-  document.addEventListener('mousemove', function (e) {
-    glow.style.left = e.clientX + 'px';
-    glow.style.top = e.clientY + 'px';
-  });
-
-  // =========================================================
-  // Efek ketik (typewriter) pada hero-role
-  // =========================================================
-  var roleEl = document.querySelector('.hero-role');
-  if (roleEl) {
-    var teksLengkap = roleEl.textContent.trim();
+  /* ---------- Efek ketik (hero) ---------- */
+  var heroType = document.getElementById('heroType');
+  if (heroType && !prefersReduced) {
+    var teksLengkap = heroType.textContent.trim();
     var idx = 0;
-    roleEl.textContent = '';
-    roleEl.classList.add('teks-ketik');
-
+    heroType.textContent = '';
     var ketik = setInterval(function () {
       idx++;
-      roleEl.textContent = teksLengkap.slice(0, idx);
+      heroType.textContent = teksLengkap.slice(0, idx);
       if (idx >= teksLengkap.length) clearInterval(ketik);
-    }, 45);
+    }, 40);
   }
 
-  // =========================================================
-  // Skill bar menyala saat terlihat
-  // =========================================================
-  var skillBars = document.querySelectorAll('.skill-fill');
-  if ('IntersectionObserver' in window && skillBars.length) {
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.style.width = entry.target.getAttribute('style') || '0%';
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-    skillBars.forEach(function (bar) {
-      var lebarAsli = (bar.getAttribute('style') || '0%');
-      bar.style.width = '0%';
-      observer.observe(bar);
-    });
-  }
-
-  // =========================================================
-  // Animasi muncul saat scroll (reveal)
-  // =========================================================
-  var revealTargets = document.querySelectorAll('.kartu, .timeline-item, .skill-item, .about-teks, .kontak-info');
-  if ('IntersectionObserver' in window && revealTargets.length) {
+  /* ---------- Reveal saat scroll ---------- */
+  var targetReveal = document.querySelectorAll(
+    '.section-head, .bento-card, .stat-card, .tech-card, .skill-group, .proj-row, .mycelia-banner, .tl-item, .contact-card, .form-card'
+  );
+  if ('IntersectionObserver' in window && !prefersReduced) {
     var revealObserver = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
@@ -201,22 +142,101 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
     );
-    revealTargets.forEach(function (el, i) {
+    targetReveal.forEach(function (el, i) {
       el.classList.add('reveal');
-      el.style.transitionDelay = (i % 3) * 0.08 + 's';
+      el.style.transitionDelay = (i % 4) * 0.06 + 's';
       revealObserver.observe(el);
     });
-
-    // Fallback: jika observer tidak memicu dalam 2.5 detik, tampilkan semua.
-    setTimeout(function () {
-      revealTargets.forEach(function (el) {
-        el.classList.add('muncul');
-      });
-      skillBars.forEach(function (bar) {
-        bar.style.width = bar.getAttribute('style') || '0%';
-      });
-    }, 2500);
   }
-});
+
+  /* ---------- Modal detail proyek ---------- */
+  var modal = document.getElementById('proyekModal');
+  var modalDataEl = document.getElementById('proyek-data');
+  var proyekData = [];
+  if (modalDataEl) {
+    try {
+      proyekData = JSON.parse(modalDataEl.textContent);
+    } catch (e) { /* abaikan */ }
+  }
+
+  var terakhirFokus = null;
+
+  function isiModal(idx) {
+    var p = proyekData[idx];
+    if (!p) return;
+
+    document.getElementById('modalIkon').className = p.ikon;
+    document.getElementById('modalKategori').textContent = (p.kategori === 'Mycelia' ? 'Mycelia Ecosystem' : p.kategori);
+    document.getElementById('modalTitle').textContent = p.nama;
+    document.getElementById('modalDesk').textContent = p.deskripsi;
+
+    var techEl = document.getElementById('modalTech');
+    techEl.innerHTML = '';
+    (p.teknologi || []).forEach(function (t) {
+      var s = document.createElement('span');
+      s.className = 'tag';
+      s.textContent = t;
+      techEl.appendChild(s);
+    });
+
+    var linksEl = document.getElementById('modalLinks');
+    linksEl.innerHTML = '';
+    if (p.download) {
+      var aDl = document.createElement('a');
+      aDl.className = 'btn btn-primary btn-sm';
+      aDl.href = p.link;
+      aDl.setAttribute('download', '');
+      aDl.innerHTML = '<i class="fas fa-download"></i> Download APK';
+      linksEl.appendChild(aDl);
+    }
+    if (p.link && p.link !== '#') {
+      var aLi = document.createElement('a');
+      aLi.className = 'btn btn-ghost btn-sm';
+      aLi.href = p.link;
+      aLi.target = '_blank';
+      aLi.rel = 'noopener';
+      aLi.innerHTML = '<i class="fas fa-arrow-right"></i> Kunjungi';
+      linksEl.appendChild(aLi);
+    }
+  }
+
+  function bukaModal(idx) {
+    if (!modal || !proyekData.length) return;
+    isiModal(idx);
+    terakhirFokus = document.activeElement;
+    modal.classList.add('buka');
+    document.body.style.overflow = 'hidden';
+    var closeBtn = modal.querySelector('.modal-close');
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function tutupModal() {
+    if (!modal) return;
+    modal.classList.remove('buka');
+    document.body.style.overflow = '';
+    if (terakhirFokus && terakhirFokus.focus) terakhirFokus.focus();
+  }
+
+  document.querySelectorAll('.btn-detail, .proj-media').forEach(function (el) {
+    el.addEventListener('click', function () {
+      bukaModal(parseInt(el.getAttribute('data-proyek'), 10));
+    });
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        bukaModal(parseInt(el.getAttribute('data-proyek'), 10));
+      }
+    });
+  });
+
+  if (modal) {
+    modal.querySelectorAll('[data-close]').forEach(function (el) {
+      el.addEventListener('click', tutupModal);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') tutupModal();
+    });
+  }
+})();

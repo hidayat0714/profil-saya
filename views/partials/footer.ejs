@@ -1,14 +1,25 @@
-</main>
+  </main>
   <footer class="footer">
     <div class="container footer-inner">
-      <p>© <span id="tahun"></span> <%= profil.nama %> — Dibuat dengan <i class="fas fa-heart"></i> menggunakan Node.js, Express &amp; EJS.</p>
-      <div class="footer-sosial">
+      <div class="footer-brand">
+        <h4><%= profil.nama %></h4>
+        <p>Building ideas into digital experiences.</p>
+      </div>
+      <div class="footer-social">
         <% profil.sosial.forEach(function(s) { %>
-          <a href="<%= s.url %>" aria-label="<%= s.nama %>"><i class="<%= s.icon %>"></i></a>
+          <a href="<%= s.url %>" target="_blank" rel="noopener" aria-label="<%= s.nama %>"><i class="<%= s.icon %>"></i></a>
         <% }) %>
+      </div>
+      <div class="footer-copy">
+        © <span id="tahun"></span> <%= profil.nama %> — Dibuat dengan <i class="fas fa-heart"></i> menggunakan Node.js, Express &amp; EJS.
       </div>
     </div>
   </footer>
+
+  <a class="wa-float" href="https://wa.me/6283844863295" target="_blank" rel="noopener" aria-label="Chat WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
   <script src="/js/main.js"></script>
 </body>
 </html>

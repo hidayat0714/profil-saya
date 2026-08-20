@@ -1,11 +1,16 @@
 <%- include('partials/header', { halaman: halaman, aktif: aktif, profil: profil }) %>
 
-  <section class="page-hero">
-    <div class="container">
-      <h1>404</h1>
-      <p>Halaman yang Anda cari tidak ditemukan.</p>
-      <a href="/" class="btn btn-hijau"><i class="fas fa-home"></i> Kembali ke Beranda</a>
+  <section class="hero" id="beranda">
+    <div class="container hero-inner" style="text-align:center; grid-template-columns:1fr;">
+      <div>
+        <span class="hero-badge" style="justify-content:center;"><span class="dot"></span> 404 — Halaman tidak ditemukan</span>
+        <h1 class="hero-nama">Oops, <span class="grad">halaman</span> hilang</h1>
+        <p class="hero-desc" style="margin:0 auto 28px;">Halaman yang Anda cari tidak ditemukan atau sudah dipindahkan.</p>
+        <div class="hero-actions" style="justify-content:center;">
+          <a href="/" class="btn btn-primary"><i class="fas fa-home"></i> Kembali ke Beranda</a>
+        </div>
+      </div>
     </div>
   </section>
 
-<%- include('partials/footer') %>
+<%- include('partials/footer', { profil: profil }) %>

@@ -1,31 +1,68 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= halaman %> | <%= profil.nama %></title>
   <meta name="description" content="<%= profil.role %> — <%= profil.tagline %>" />
+  <meta name="author" content="<%= profil.nama %>" />
+  <meta name="theme-color" content="#07152F" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="<%= profil.nama %>" />
+  <meta property="og:title" content="<%= halaman %> | <%= profil.nama %>" />
+  <meta property="og:description" content="<%= profil.tagline %>" />
+  <meta property="og:image" content="/images/foto-ajim.jpeg" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="<%= halaman %> | <%= profil.nama %>" />
+  <meta name="twitter:description" content="<%= profil.tagline %>" />
+  <meta name="twitter:image" content="/images/foto-ajim.jpeg" />
+
   <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="bg-fx" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+  </div>
+
   <header class="navbar" id="navbar">
-    <a href="#beranda" class="logo">
-      <span class="logo-badge">MH</span>
-      <span class="logo-text"><%= profil.nama %></span>
-    </a>
-    <button class="nav-toggle" id="navToggle" aria-label="Buka menu">
-      <i class="fas fa-bars"></i>
-    </button>
-    <nav class="nav-menu" id="navMenu">
-      <a href="#beranda" class="<%= aktif === 'beranda' ? 'active' : '' %>"><i class="fas fa-home"></i> Beranda</a>
-      <a href="#tentang" class="<%= aktif === 'tentang' ? 'active' : '' %>"><i class="fas fa-user"></i> Tentang</a>
-      <a href="#keahlian" class="<%= aktif === 'keahlian' ? 'active' : '' %>"><i class="fas fa-chart-bar"></i> Keahlian</a>
-      <a href="#proyek" class="<%= aktif === 'proyek' ? 'active' : '' %>"><i class="fas fa-briefcase"></i> Proyek</a>
-      <a href="#kontak" class="<%= aktif === 'kontak' ? 'active' : '' %>"><i class="fas fa-envelope"></i> Kontak</a>
-    </nav>
+    <div class="nav-inner">
+      <a href="#beranda" class="logo" aria-label="Kembali ke beranda">
+        <span class="logo-badge">MH</span>
+        <span class="logo-text"><%= profil.nama %></span>
+      </a>
+
+      <nav class="nav-menu" id="navMenu" aria-label="Navigasi utama">
+        <a href="#beranda" class="nav-link <%= aktif === 'beranda' ? 'active' : '' %>">Beranda</a>
+        <a href="#tentang" class="nav-link <%= aktif === 'tentang' ? 'active' : '' %>">Tentang</a>
+        <a href="#keahlian" class="nav-link <%= aktif === 'keahlian' ? 'active' : '' %>">Keahlian</a>
+        <a href="#proyek" class="nav-link <%= aktif === 'proyek' ? 'active' : '' %>">Proyek</a>
+        <a href="#pengalaman" class="nav-link <%= aktif === 'pengalaman' ? 'active' : '' %>">Pengalaman</a>
+        <a href="#kontak" class="nav-link <%= aktif === 'kontak' ? 'active' : '' %>">Kontak</a>
+      </nav>
+
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="Ganti tema terang / gelap" title="Ganti tema">
+          <i class="fas fa-sun"></i>
+        </button>
+        <a href="#kontak" class="btn btn-primary btn-sm nav-cta">Let's Talk</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Buka menu" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
   </header>
   <main>

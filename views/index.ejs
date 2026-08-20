@@ -4,86 +4,114 @@
   <section class="hero" id="beranda">
     <div class="container hero-inner">
       <div class="hero-text">
-        <p class="hero-greeting">Halo, selamat datang! Saya biasa dipanggil <strong><%= profil.namaPanggilan %></strong> 👋</p>
-        <h1 class="hero-nama">Saya <span class="teks-hijau"><%= profil.nama %></span></h1>
-        <p class="hero-role"><%= profil.role %></p>
-        <p class="hero-tagline"><%= profil.tagline %></p>
-        <div class="hero-aksi">
-          <a href="#proyek" class="btn btn-hijau"><i class="fas fa-briefcase"></i> Lihat Proyek</a>
-          <a href="#kontak" class="btn btn-outline"><i class="fas fa-paper-plane"></i> Hubungi Saya</a>
+        <span class="hero-badge"><span class="dot"></span> Hello, I'm <%= profil.namaPanggilan %> 👋</span>
+        <h1 class="hero-nama">Muhamad <span class="grad">Hidayat</span></h1>
+        <p class="hero-sub"><span id="heroType"><%= profil.role %></span></p>
+        <p class="hero-desc"><%= profil.tagline %></p>
+        <div class="hero-actions">
+          <a href="#proyek" class="btn btn-primary"><i class="fas fa-arrow-right"></i> Lihat Proyek</a>
+          <a href="#kontak" class="btn btn-ghost"><i class="fas fa-paper-plane"></i> Hubungi Saya</a>
         </div>
-        <div class="hero-sosial">
+        <div class="hero-social">
           <% profil.sosial.forEach(function(s) { %>
-            <a href="<%= s.url %>" aria-label="<%= s.nama %>"><i class="<%= s.icon %>"></i></a>
+            <a href="<%= s.url %>" target="_blank" rel="noopener" aria-label="<%= s.nama %>"><i class="<%= s.icon %>"></i></a>
           <% }) %>
         </div>
       </div>
-      <div class="hero-avatar">
-        <div class="avatar-box">
-          <img src="/images/foto-ajim.jpeg" alt="Foto <%= profil.nama %>" class="avatar-foto" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-inisial',textContent:'<%= profil.nama.split(' ').map(function(w){ return w[0] }).join('') %>'}))" />
+
+      <div class="hero-visual">
+        <span class="ring" aria-hidden="true"></span>
+        <div class="avatar-wrap">
+          <img src="/images/foto-ajim.jpeg" alt="Foto <%= profil.nama %>" class="avatar-img" loading="eager" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-inisial',textContent:'<%= profil.nama.split(' ').map(function(w){ return w[0] }).join('') %>'}))" />
         </div>
+        <span class="float-chip chip-1"><i class="fab fa-flutter"></i> Flutter</span>
+        <span class="float-chip chip-2"><i class="fas fa-microchip"></i> IoT</span>
+        <span class="float-chip chip-3"><i class="fab fa-node-js"></i> Node.js</span>
       </div>
     </div>
-    <svg class="waves" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
-      <path class="wave wave-1" d="M0,64 C240,120 480,0 720,40 C960,80 1200,10 1440,60 L1440,120 L0,120 Z"/>
-      <path class="wave wave-2" d="M0,90 C240,40 480,110 720,70 C960,30 1200,100 1440,60 L1440,120 L0,120 Z"/>
-    </svg>
+    <a href="#tentang" class="hero-scroll" aria-label="Gulir ke bawah"><i class="fas fa-chevron-down"></i></a>
   </section>
 
-  <!-- ============ RINGKASAN ============ -->
-  <section class="section section-transparan" id="tentang">
+  <!-- ============ TENTANG ============ -->
+  <section class="section" id="tentang">
     <div class="container">
-      <div class="about-grid">
-        <div class="about-foto">
-          <div class="avatar-box">
-            <img src="/images/foto-ajim.jpeg" alt="Foto <%= profil.nama %>" class="avatar-foto" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-inisial',textContent:'<%= profil.nama.split(' ').map(function(w){ return w[0] }).join('') %>'}))" />
+      <div class="section-head">
+        <div>
+          <span class="section-label">01 / About</span>
+          <h2 class="section-title">Tentang Saya</h2>
+        </div>
+        <p class="section-desc">Mahasiswa Teknik Informatika yang menggabungkan teknologi dengan pertanian.</p>
+      </div>
+
+      <div class="bento">
+        <div class="bento-card bento-main">
+          <h3>Halo, saya <%= profil.nama %> 👋</h3>
+          <p><%= profil.ringkasan %></p>
+          <div class="bento-info" style="margin-top: 22px;">
+            <span class="bi-ikon"><i class="fas fa-leaf"></i></span>
+            <div>
+              <div class="bi-label">Fokus</div>
+              <div class="bi-value">Smart Farming & IoT</div>
+            </div>
           </div>
         </div>
-        <div class="about-teks">
-          <h2>Halo, saya <%= profil.nama %> 👋</h2>
-          <p>
-            Saya <strong><%= profil.nama %></strong>, biasa dipanggil <strong><%= profil.namaPanggilan %></strong>.
-            Lahir di <strong><%= profil.ttl %></strong>. Seorang <strong><%= profil.role %></strong>
-            yang berdomisili di <%= profil.lokasi %>.
-          </p>
-          <p><%= profil.ringkasan %></p>
-          <ul class="about-info">
-            <li><i class="fas fa-user-circle"></i> <strong>Nama:</strong> <%= profil.nama %> (<%= profil.namaPanggilan %>)</li>
-            <li><i class="fas fa-calendar-alt"></i> <strong>TTL:</strong> <%= profil.ttl %></li>
-            <li><i class="fas fa-briefcase"></i> <strong>Posisi:</strong> <%= profil.role %></li>
-            <li><i class="fas fa-envelope"></i> <strong>Email:</strong> <%= profil.email %></li>
-            <li><i class="fas fa-map-marker-alt"></i> <strong>Lokasi:</strong> <%= profil.lokasi %></li>
-            <li><i class="fas fa-palette"></i> <strong>Warna Favorit:</strong> <%= profil.warnaFavorit %></li>
-            <li><i class="fas fa-fish"></i> <strong>Hobi:</strong> <%= profil.hobi.join(' • ') %></li>
-          </ul>
-          <a href="#kontak" class="btn btn-hijau"><i class="fas fa-paper-plane"></i> Hubungi Saya</a>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ============ KEUNGGULAN ============ -->
-  <section class="section">
-    <div class="container">
-      <div class="bagian-judul">
-        <h2>Bidang Saya</h2>
-        <p>Apa yang saya tekuni.</p>
-      </div>
-      <div class="grid-kartu">
-        <div class="kartu">
-          <i class="fas fa-code kartu-ikon"></i>
-          <h3>Pengembangan Aplikasi</h3>
-          <p>Aplikasi mobile lintas platform dengan Flutter dan API backend menggunakan Node.js.</p>
+        <div class="bento-card">
+          <div class="bento-info">
+            <span class="bi-ikon"><i class="fas fa-map-marker-alt"></i></span>
+            <div>
+              <div class="bi-label">Lokasi</div>
+              <div class="bi-value"><%= profil.lokasi %></div>
+            </div>
+          </div>
         </div>
-        <div class="kartu">
-          <i class="fas fa-leaf kartu-ikon"></i>
-          <h3>Smart Farming & IoT</h3>
-          <p>Teknologi IoT untuk budidaya jamur tiram dan pertanian yang efisien dan berkelanjutan.</p>
+
+        <div class="bento-card">
+          <div class="bento-info">
+            <span class="bi-ikon"><i class="fas fa-graduation-cap"></i></span>
+            <div>
+              <div class="bi-label">Pendidikan</div>
+              <div class="bi-value">D4 Teknik Informatika — Politeknik Hasnur</div>
+            </div>
+          </div>
         </div>
-        <div class="kartu">
-          <i class="fas fa-database kartu-ikon"></i>
-          <h3>Firebase & Database</h3>
-          <p>Realtime database, autentikasi, dan penyimpanan data terintegrasi dengan Firebase.</p>
+
+        <div class="bento-card">
+          <div class="bento-info">
+            <span class="bi-ikon"><i class="fas fa-code"></i></span>
+            <div>
+              <div class="bi-label">Fokus Utama</div>
+              <div class="bi-value">Mobile, Web & Backend</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-card">
+          <div class="bento-info">
+            <span class="bi-ikon"><i class="fas fa-fish"></i></span>
+            <div>
+              <div class="bi-label">Minat</div>
+              <div class="bi-value"><%= profil.hobi.join(' • ') %></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-stats">
+          <div class="stat-card">
+            <div class="stat-num"><%= profil.proyek.length %></div>
+            <div class="stat-label">Proyek Dibangun</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num"><%= profil.keahlian.length %></div>
+            <div class="stat-label">Teknologi Dikuasai</div>
+          </div>
+          <% var expTahun = ''; profil.pengalaman.forEach(function(p){ if(/^\d+/.test(p.periode) && !expTahun) expTahun = p.periode; }); %>
+          <% if (expTahun) { %>
+          <div class="stat-card">
+            <div class="stat-num"><%= expTahun.replace(/[^\d]/g, '') %></div>
+            <div class="stat-label">Tahun Budidaya Jamur</div>
+          </div>
+          <% } %>
         </div>
       </div>
     </div>
@@ -92,83 +120,131 @@
   <!-- ============ KEAHLIAN ============ -->
   <section class="section" id="keahlian">
     <div class="container">
-      <div class="bagian-judul">
-        <h2>Keahlian</h2>
-        <p>Beberapa teknologi yang saya kuasai.</p>
-      </div>
-      <div class="skill-list">
-        <% profil.keahlian.forEach(function(k) { %>
-          <div class="skill-item">
-            <div class="skill-info">
-              <span><%= k.nama %></span>
-              <span><%= k.level %>%</span>
-            </div>
-            <div class="skill-bar"><div class="skill-fill" style="width: <%= k.level %>%;"></div></div>
-          </div>
-        <% }) %>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ PENDIDIKAN & PENGALAMAN ============ -->
-  <section class="section section-gelap" id="pendidikan">
-    <div class="container">
-      <div class="bagian-judul">
-        <h2>Riwayat Pendidikan</h2>
-        <p>Perjalanan pendidikan saya dari SD hingga kampus.</p>
-      </div>
-      <div class="timeline">
-        <% profil.pendidikan.forEach(function(p) { %>
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content kartu">
-              <h3><%= p.nama %></h3>
-              <p class="timeline-periode"><i class="fas fa-graduation-cap"></i> <%= p.periode %></p>
-            </div>
-          </div>
-        <% }) %>
+      <div class="section-head">
+        <div>
+          <span class="section-label">02 / Skills</span>
+          <h2 class="section-title">Keahlian</h2>
+        </div>
+        <p class="section-desc">Teknologi yang saya gunakan untuk membangun solusi.</p>
       </div>
 
-      <div class="bagian-judul bagian-judul-extra">
-        <h2>Pengalaman</h2>
-      </div>
-      <div class="grid-kartu">
-        <% profil.pengalaman.forEach(function(p) { %>
-          <div class="kartu">
-            <i class="fas fa-briefcase kartu-ikon"></i>
-            <p class="timeline-periode"><i class="fas fa-clock"></i> <%= p.periode %></p>
-            <h3><%= p.judul %></h3>
-            <p><%= p.deskripsi %></p>
+      <% var kat = []; profil.keahlian.forEach(function(k){ if (kat.indexOf(k.kategori) === -1) kat.push(k.kategori); }); %>
+      <% kat.forEach(function(kategori) { %>
+        <div class="skill-group">
+          <h3 class="skill-group-title"><%= kategori %></h3>
+          <div class="tech-grid">
+            <% profil.keahlian.filter(function(k){ return k.kategori === kategori; }).forEach(function(k) { %>
+              <div class="tech-card" role="listitem">
+                <span class="tech-icon"><i class="<%= k.ikon %>" aria-hidden="true"></i></span>
+                <div>
+                  <div class="tech-name"><%= k.nama %></div>
+                  <div class="tech-cat"><%= k.kategori %></div>
+                </div>
+              </div>
+            <% }) %>
           </div>
-        <% }) %>
-      </div>
+        </div>
+      <% }) %>
     </div>
   </section>
 
   <!-- ============ PROYEK ============ -->
   <section class="section" id="proyek">
     <div class="container">
-      <div class="bagian-judul">
-        <h2>Proyek</h2>
-        <p>Beberapa proyek yang pernah saya kerjakan — termasuk tugas akhir berbasis IoT.</p>
+      <div class="section-head">
+        <div>
+          <span class="section-label">03 / Projects</span>
+          <h2 class="section-title">Proyek Pilihan</h2>
+        </div>
+        <p class="section-desc">Proyek yang saya kerjakan — dari IoT hingga pengembangan aplikasi.</p>
       </div>
-      <div class="proyek-grid">
+
+      <% var mycelia = profil.proyek.filter(function(p){ return p.kategori === 'Mycelia'; }); %>
+      <% if (mycelia.length > 1) { %>
+      <div class="mycelia-banner">
+        <div>
+          <h3>Mycelia <span>Ecosystem</span></h3>
+          <p>Rangkaian proyek budidaya jamur & smart farming — Smart Farming, Harvest Management, dan IoT.</p>
+        </div>
+        <div class="mb-chips">
+          <% mycelia.forEach(function(p) { %>
+            <span class="tag"><i class="<%= p.ikon %>" style="margin-right:6px;"></i><%= p.nama.split('—')[0] %></span>
+          <% }) %>
+        </div>
+      </div>
+      <% } %>
+
+      <div class="proj-featured">
         <% profil.proyek.forEach(function(p, i) { %>
-          <div class="kartu proyek-kartu">
-            <div class="proyek-ikon"><i class="fas fa-rocket"></i></div>
-            <div class="proyek-badge"><%= String(i + 1).padStart(2, '0') %></div>
-            <h3><%= p.nama %></h3>
-            <p><%= p.deskripsi %></p>
-            <div class="tech-tags">
-              <% p.teknologi.forEach(function(t) { %>
-                <span class="tag"><%= t %></span>
-              <% }) %>
-            </div>
-            <% if (p.download) { %>
-              <a href="<%= p.link %>" download class="btn btn-hijau btn-kecil"><i class="fas fa-download"></i> Download APK</a>
-            <% } else { %>
-              <a href="<%= p.link %>" class="btn btn-hijau btn-kecil"><i class="fas fa-arrow-right"></i> Detail</a>
+          <article class="proj-row">
+            <% if (i % 2 === 0) { %>
+              <div class="proj-media" data-proyek="<%= i %>" role="button" tabindex="0" aria-label="Detail proyek <%= p.nama %>">
+                <span class="pm-num"><%= String(i + 1).padStart(2, '0') %></span>
+                <i class="<%= p.ikon %> pm-ikon" aria-hidden="true"></i>
+                <span class="pm-cat"><%= p.kategori %></span>
+              </div>
             <% } %>
+            <div class="proj-info">
+              <span class="chip"><i class="<%= p.ikon %>"></i> <%= p.kategori === 'Mycelia' ? 'Mycelia Ecosystem' : 'Web' %></span>
+              <h3><%= p.nama %></h3>
+              <p><%= p.deskripsi %></p>
+              <div class="tech-tags">
+                <% p.teknologi.forEach(function(t) { %><span class="tag"><%= t %></span><% }) %>
+              </div>
+              <div class="proj-btns">
+                <button class="btn btn-primary btn-sm btn-detail" data-proyek="<%= i %>" type="button"><i class="fas fa-eye"></i> Detail</button>
+                <% if (p.download) { %>
+                  <a href="<%= p.link %>" download class="btn btn-ghost btn-sm"><i class="fas fa-download"></i> Download APK</a>
+                <% } else if (p.link && p.link !== '#') { %>
+                  <a href="<%= p.link %>" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-right"></i> Kunjungi</a>
+                <% } %>
+              </div>
+            </div>
+            <% if (i % 2 === 1) { %>
+              <div class="proj-media" data-proyek="<%= i %>" role="button" tabindex="0" aria-label="Detail proyek <%= p.nama %>">
+                <span class="pm-num"><%= String(i + 1).padStart(2, '0') %></span>
+                <i class="<%= p.ikon %> pm-ikon" aria-hidden="true"></i>
+                <span class="pm-cat"><%= p.kategori %></span>
+              </div>
+            <% } %>
+          </article>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PENDIDIKAN & PENGALAMAN ============ -->
+  <section class="section" id="pengalaman">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-label">04 / Experience</span>
+          <h2 class="section-title">Pendidikan & Pengalaman</h2>
+        </div>
+        <p class="section-desc">Perjalanan akademik dan pengalaman yang membentuk saya.</p>
+      </div>
+
+      <div class="timeline">
+        <% profil.pengalaman.forEach(function(p) { %>
+          <div class="tl-item">
+            <span class="tl-node" aria-hidden="true"><i class="fas fa-briefcase"></i></span>
+            <div class="tl-card">
+              <div class="tl-type">Pengalaman</div>
+              <h3 class="tl-title"><%= p.judul %></h3>
+              <div class="tl-period"><i class="far fa-calendar" style="margin-right:6px;"></i><%= p.periode %></div>
+              <p class="tl-desc"><%= p.deskripsi %></p>
+            </div>
+          </div>
+        <% }) %>
+
+        <% profil.pendidikan.slice().reverse().forEach(function(p) { %>
+          <div class="tl-item">
+            <span class="tl-node" aria-hidden="true"><i class="fas fa-graduation-cap"></i></span>
+            <div class="tl-card">
+              <div class="tl-type">Pendidikan</div>
+              <h3 class="tl-title"><%= p.nama %></h3>
+              <div class="tl-period"><i class="far fa-calendar" style="margin-right:6px;"></i><%= p.periode %></div>
+            </div>
           </div>
         <% }) %>
       </div>
@@ -176,41 +252,45 @@
   </section>
 
   <!-- ============ KONTAK ============ -->
-  <section class="section section-gelap section-kontak" id="kontak">
+  <section class="section" id="kontak">
     <div class="container">
-      <div class="bagian-judul">
-        <h2>Kontak</h2>
-        <p>Punya pertanyaan atau tawaran kerja sama? Kirim pesan di bawah ini.</p>
+      <div class="contact-head">
+        <span class="section-label" style="justify-content:center;">05 / Contact</span>
+        <h2 class="section-title">Let's build something together.</h2>
+        <p>Punya pertanyaan, ide, atau tawaran kerja sama? Saya senang mengobrol — kirim pesan atau hubungi saya lewat media di bawah.</p>
       </div>
+
       <% if (pesan) { %>
         <div class="alert alert-<%= pesan.tipe %>">
           <i class="fas fa-<%= pesan.tipe === 'sukses' ? 'check-circle' : 'exclamation-circle' %>"></i>
           <%= pesan.teks %>
         </div>
       <% } %>
-      <div class="kontak-grid">
-        <div class="kontak-info">
-          <h2>Informasi Kontak</h2>
-          <p>Isi formulir atau hubungi saya melalui media berikut:</p>
-          <ul class="kontak-list">
-            <li><i class="fas fa-user-circle"></i> <strong><%= profil.nama %></strong></li>
-            <li><i class="fas fa-envelope"></i> <a href="mailto:<%= profil.email %>"><%= profil.email %></a></li>
-            <li><i class="fas fa-map-marker-alt"></i> <%= profil.lokasi %></li>
-          </ul>
-          <div class="hero-sosial">
-            <% profil.sosial.forEach(function(s) { %>
-              <a href="<%= s.url %>" aria-label="<%= s.nama %>"><i class="<%= s.icon %>"></i></a>
-            <% }) %>
-          </div>
+
+      <div class="contact-grid">
+        <div class="contact-cards">
+          <% profil.sosial.forEach(function(s) { %>
+            <% if (s.nama === 'Email' || s.nama === 'GitHub' || s.nama === 'WhatsApp' || s.nama === 'LinkedIn') { %>
+            <a class="contact-card" href="<%= s.url %>" target="_blank" rel="noopener">
+              <span class="cc-ikon"><i class="<%= s.icon %>"></i></span>
+              <div class="cc-body">
+                <div class="cc-label"><%= s.nama %></div>
+                <div class="cc-value"><%= s.nama === 'Email' ? profil.email : s.url.replace(/^https?:\/\/(www\.)?/, '') %></div>
+              </div>
+            </a>
+            <% } %>
+          <% }) %>
+          <a class="btn btn-primary" href="mailto:<%= profil.email %>" style="justify-content:center;"><i class="fas fa-paper-plane"></i> Get In Touch</a>
         </div>
-        <form action="/kontak" method="POST" class="form-kontak" id="formKontak">
+
+        <form action="/kontak" method="POST" class="form-card" id="formKontak">
           <div class="form-group">
             <label for="nama">Nama Lengkap</label>
-            <input type="text" id="nama" name="nama" placeholder="Nama Anda" required />
+            <input type="text" id="nama" name="nama" placeholder="Nama Anda" required autocomplete="name" />
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="nama@email.com" required />
+            <input type="email" id="email" name="email" placeholder="nama@email.com" required autocomplete="email" />
           </div>
           <div class="form-group">
             <label for="subjek">Subjek</label>
@@ -220,10 +300,27 @@
             <label for="isi">Pesan</label>
             <textarea id="isi" name="isi" rows="5" placeholder="Tulis pesan Anda..." required></textarea>
           </div>
-          <button type="submit" class="btn btn-hijau btn-lebar"><i class="fas fa-paper-plane"></i> Kirim Pesan</button>
+          <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> Kirim Pesan</button>
         </form>
       </div>
     </div>
   </section>
 
-<%- include('partials/footer') %>
+  <!-- ============ MODAL DETAIL PROYEK ============ -->
+  <div class="modal" id="proyekModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog">
+      <button class="modal-close" data-close aria-label="Tutup detail"><i class="fas fa-times"></i></button>
+      <div class="modal-media"><i class="fas fa-code" id="modalIkon"></i></div>
+      <div class="modal-kategori" id="modalKategori"></div>
+      <h3 id="modalTitle"></h3>
+      <p class="md-desc" id="modalDesk"></p>
+      <div class="md-sub">Teknologi</div>
+      <div class="tech-tags" id="modalTech"></div>
+      <div class="modal-links" id="modalLinks"></div>
+    </div>
+  </div>
+
+  <script id="proyek-data" type="application/json"><%- JSON.stringify(profil.proyek) %></script>
+
+<%- include('partials/footer', { profil: profil }) %>

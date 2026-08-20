@@ -60,7 +60,7 @@ const profilData = {
   namaPanggilan: 'Ajim',
   ttl: 'Sei Pantai, 02 Desember 2005',
   role: 'Mahasiswa Teknik Informatika & Smart Farming Developer',
-  email: 'muhamad.hidayat@gmail.com',
+  email: 'garudalangit72@gmail.com',
   lokasi: 'Barito Kuala, Kalimantan Selatan',
   tagline:
     'Mahasiswa Teknik Informatika yang menggabungkan IT dengan pertanian — membangun solusi IoT untuk budidaya jamur tiram.',
@@ -93,14 +93,14 @@ const profilData = {
     },
   ],
   keahlian: [
-    { nama: 'Flutter / Dart', level: 85 },
-    { nama: 'Firebase (Auth, Realtime DB)', level: 80 },
-    { nama: 'IoT (ESP32, Sensor, Mqtt)', level: 75 },
-    { nama: 'Node.js (Express)', level: 70 },
-    { nama: 'Jaringan (Dasar)', level: 65 },
-    { nama: 'Linux (Dasar)', level: 60 },
-    { nama: 'MySQL / SQLite', level: 60 },
-    { nama: 'UI/UX Design', level: 55 },
+    { nama: 'Flutter / Dart', ikon: 'fab fa-flutter', level: 85, kategori: 'Mobile Development' },
+    { nama: 'Firebase (Auth, Realtime DB)', ikon: 'fas fa-fire', level: 80, kategori: 'Backend & Database' },
+    { nama: 'IoT (ESP32, Sensor, Mqtt)', ikon: 'fas fa-microchip', level: 75, kategori: 'IoT & Hardware' },
+    { nama: 'Node.js (Express)', ikon: 'fab fa-node-js', level: 70, kategori: 'Backend & Database' },
+    { nama: 'Jaringan (Dasar)', ikon: 'fas fa-network-wired', level: 65, kategori: 'IoT & Hardware' },
+    { nama: 'Linux (Dasar)', ikon: 'fab fa-linux', level: 60, kategori: 'IoT & Hardware' },
+    { nama: 'MySQL / SQLite', ikon: 'fas fa-database', level: 60, kategori: 'Backend & Database' },
+    { nama: 'UI/UX Design', ikon: 'fas fa-palette', level: 55, kategori: 'Design' },
   ],
   proyek: [
     {
@@ -110,6 +110,8 @@ const profilData = {
       teknologi: ['Flutter', 'Firebase', 'Android'],
       link: '/downloads/panen-jamur.apk',
       download: true,
+      ikon: 'fas fa-mushroom',
+      kategori: 'Mycelia',
     },
     {
       nama: 'Mycelia Smart Farming',
@@ -117,6 +119,8 @@ const profilData = {
         'Tugas akhir berbasis IoT — monitoring suhu, kelembaban, dan penyiraman otomatis budidaya jamur tiram lewat aplikasi mobile.',
       teknologi: ['Flutter', 'Firebase', 'IoT', 'ESP32'],
       link: '#',
+      ikon: 'fas fa-seedling',
+      kategori: 'Mycelia',
     },
     {
       nama: 'Sistem Penyiraman Otomatis',
@@ -124,6 +128,8 @@ const profilData = {
         'Kontrol penyiraman otomatis berbasis sensor kelembaban dengan mode manual & otomatis untuk lahan pertanian.',
       teknologi: ['IoT', 'ESP32', 'Firebase'],
       link: '#',
+      ikon: 'fas fa-faucet-drip',
+      kategori: 'Mycelia',
     },
     {
       nama: 'Website Profil Pribadi',
@@ -131,13 +137,17 @@ const profilData = {
         'Website fullstack ini sendiri — dibangun dengan Node.js, Express, dan EJS untuk portofolio pribadi.',
       teknologi: ['Node.js', 'Express', 'EJS'],
       link: '/',
+      ikon: 'fas fa-globe',
+      kategori: 'Web',
     },
   ],
   sosial: [
-    { nama: 'GitHub', icon: 'fab fa-github', url: '#' },
-    { nama: 'LinkedIn', icon: 'fab fa-linkedin-in', url: '#' },
-    { nama: 'Instagram', icon: 'fab fa-instagram', url: '#' },
-    { nama: 'Email', icon: 'fas fa-envelope', url: 'mailto:muhamad.hidayat@gmail.com' },
+    { nama: 'GitHub', icon: 'fab fa-github', url: 'https://github.com/hidayat0714' },
+    { nama: 'LinkedIn', icon: 'fab fa-linkedin-in', url: 'https://www.linkedin.com/in/muhamad-hidayat-1118b5338/' },
+    { nama: 'Instagram', icon: 'fab fa-instagram', url: 'https://www.instagram.com/hidayat_0714/' },
+    { nama: 'TikTok', icon: 'fab fa-tiktok', url: 'https://www.tiktok.com/@ajim0714' },
+    { nama: 'WhatsApp', icon: 'fab fa-whatsapp', url: 'https://wa.me/6283844863295' },
+    { nama: 'Email', icon: 'fas fa-envelope', url: 'mailto:garudalangit72@gmail.com' },
   ],
 };
 
