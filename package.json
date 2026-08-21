@@ -1,6 +1,6 @@
 {
   "name": "profil-saya",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Website fullstack profil pribadi Muhamad Hidayat (Node.js + Express + EJS)",
   "main": "server.js",
   "scripts": {
