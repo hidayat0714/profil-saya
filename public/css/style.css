@@ -1496,6 +1496,7 @@ a {
     border-bottom: 1px solid var(--border);
     display: none;
     box-shadow: var(--shadow-sm);
+    z-index: 99;
   }
 
   .nav-menu.buka {
