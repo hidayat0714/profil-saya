@@ -1,13 +1,13 @@
 /* =========================================================
-   Modern Developer Portfolio — main.js
-   Tema, navbar, menu, scrollspy, reveal, modal, efek ketik
+   AJIM // DIGITAL LAB — main.js
+   Interactive Personal Portfolio / Digital Experience
    ========================================================= */
 (function () {
   'use strict';
 
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- Tema (dark default / light toggle) ---------- */
+  /* ---------- Root & Theme ---------- */
   var root = document.documentElement;
   var themeToggle = document.getElementById('themeToggle');
 
@@ -16,15 +16,11 @@
     if (themeToggle) {
       themeToggle.innerHTML = tema === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     }
-    try {
-      localStorage.setItem('tema', tema);
-    } catch (e) { /* abaikan */ }
+    try { localStorage.setItem('tema', tema); } catch (e) { /* abaikan */ }
   }
 
   var temaTersimpan = null;
-  try {
-    temaTersimpan = localStorage.getItem('tema');
-  } catch (e) { /* abaikan */ }
+  try { temaTersimpan = localStorage.getItem('tema'); } catch (e) { /* abaikan */ }
 
   if (temaTersimpan === 'dark' || temaTersimpan === 'light') {
     setTheme(temaTersimpan);
@@ -128,115 +124,575 @@
     }, 40);
   }
 
-  /* ---------- Reveal saat scroll ---------- */
-  var targetReveal = document.querySelectorAll(
-    '.section-head, .bento-card, .stat-card, .tech-card, .skill-group, .proj-row, .mycelia-banner, .tl-item, .contact-card, .form-card'
-  );
-  if ('IntersectionObserver' in window && !prefersReduced) {
-    var revealObserver = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('muncul');
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-    );
-    targetReveal.forEach(function (el, i) {
-      el.classList.add('reveal');
-      el.style.transitionDelay = (i % 4) * 0.06 + 's';
-      revealObserver.observe(el);
-    });
-  }
+  /* ---------- Boot Sequence ---------- */
+  function bootSequence() {
+    var bootOverlay = document.getElementById('bootOverlay');
+    var bootText1 = document.getElementById('bootText1');
+    var bootText2 = document.getElementById('bootText2');
+    var bootText3 = document.getElementById('bootText3');
+    var bootText4 = document.getElementById('bootText4');
+    var bootText5 = document.getElementById('bootText5');
+    var bootBar = document.getElementById('bootBar');
+    var bootPercent = document.getElementById('bootPercent');
+    var bootSkip = document.getElementById('bootSkip');
+    var particlesCanvas = document.getElementById('particlesCanvas');
 
-  /* ---------- Modal detail proyek ---------- */
-  var modal = document.getElementById('proyekModal');
-  var modalDataEl = document.getElementById('proyek-data');
-  var proyekData = [];
-  if (modalDataEl) {
-    try {
-      proyekData = JSON.parse(modalDataEl.textContent);
-    } catch (e) { /* abaikan */ }
-  }
+    if (!bootOverlay) return;
 
-  var terakhirFokus = null;
+    var texts = [
+      'SYSTEM INITIALIZING...',
+      'LOADING NEURAL INTERFACE...',
+      'ACCESSING MEMORY BANKS...',
+      'ESTABLISHING SECURE CONNECTION...',
+      'WELCOME TO AJIM\'S DIGITAL WORLD'
+    ];
 
-  function isiModal(idx) {
-    var p = proyekData[idx];
-    if (!p) return;
+    var steps = [
+      { el: bootText1, text: texts[0], delay: 300 },
+      { el: bootText2, text: texts[1], delay: 300 },
+      { el: bootText3, text: texts[2], delay: 300 },
+      { el: bootText4, text: texts[3], delay: 300 },
+      { el: bootText5, text: texts[4], delay: 300 }
+    ];
 
-    document.getElementById('modalIkon').className = p.ikon;
-    document.getElementById('modalKategori').textContent = (p.kategori === 'Mycelia' ? 'Mycelia Ecosystem' : p.kategori);
-    document.getElementById('modalTitle').textContent = p.nama;
-    document.getElementById('modalDesk').textContent = p.deskripsi;
+    var progressStep = 0;
+    var progressInterval = setInterval(function () {
+      progressStep++;
+      var percent = Math.min(100, Math.round((progressStep / 5) * 100));
+      if (bootBar) bootBar.style.width = percent + '%';
+      if (bootPercent) bootPercent.textContent = percent + '%';
+    }, 400);
 
-    var techEl = document.getElementById('modalTech');
-    techEl.innerHTML = '';
-    (p.teknologi || []).forEach(function (t) {
-      var s = document.createElement('span');
-      s.className = 'tag';
-      s.textContent = t;
-      techEl.appendChild(s);
-    });
+    var textIdx = 0;
+    var charIdx = 0;
+    var isDeleting = false;
+    var currentText = '';
 
-    var linksEl = document.getElementById('modalLinks');
-    linksEl.innerHTML = '';
-    if (p.download) {
-      var aDl = document.createElement('a');
-      aDl.className = 'btn btn-primary btn-sm';
-      aDl.href = p.link;
-      aDl.setAttribute('download', '');
-      aDl.innerHTML = '<i class="fas fa-download"></i> Download APK';
-      linksEl.appendChild(aDl);
+    function typeText() {
+      if (textIdx >= steps.length) {
+        if (bootOverlay) {
+          bootOverlay.classList.add('hidden');
+          setTimeout(function () { bootOverlay.style.display = 'none'; }, 600);
+        }
+        clearInterval(bootInterval);
+        clearInterval(typeInterval);
+        return;
+      }
+
+      var step = steps[textIdx];
+      var targetEl = step.el;
+
+      if (!targetEl) { textIdx++; return; }
+
+      if (!isDeleting) {
+        currentText = currentText + step.text.charAt(charIdx);
+        targetEl.textContent = currentText;
+        charIdx++;
+        if (charIdx >= step.text.length) {
+          isDeleting = true;
+        }
+      } else {
+        currentText = currentText.substring(0, charIdx - 1);
+        targetEl.textContent = currentText;
+        charIdx--;
+        if (charIdx <= 0) {
+          isDeleting = false;
+          textIdx++;
+        }
+      }
     }
-    if (p.link && p.link !== '#') {
-      var aLi = document.createElement('a');
-      aLi.className = 'btn btn-ghost btn-sm';
-      aLi.href = p.link;
-      aLi.target = '_blank';
-      aLi.rel = 'noopener';
-      aLi.innerHTML = '<i class="fas fa-arrow-right"></i> Kunjungi';
-      linksEl.appendChild(aLi);
-    }
-  }
 
-  function bukaModal(idx) {
-    if (!modal || !proyekData.length) return;
-    isiModal(idx);
-    terakhirFokus = document.activeElement;
-    modal.classList.add('buka');
-    document.body.style.overflow = 'hidden';
-    var closeBtn = modal.querySelector('.modal-close');
-    if (closeBtn) closeBtn.focus();
-  }
-
-  function tutupModal() {
-    if (!modal) return;
-    modal.classList.remove('buka');
-    document.body.style.overflow = '';
-    if (terakhirFokus && terakhirFokus.focus) terakhirFokus.focus();
-  }
-
-  document.querySelectorAll('.btn-detail, .proj-media').forEach(function (el) {
-    el.addEventListener('click', function () {
-      bukaModal(parseInt(el.getAttribute('data-proyek'), 10));
-    });
-    el.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        bukaModal(parseInt(el.getAttribute('data-proyek'), 10));
+    typeInterval = setInterval(typeText, 50);
+    bootSkip.addEventListener('click', function () {
+      clearInterval(bootInterval);
+      clearInterval(typeInterval);
+      if (bootOverlay) {
+        bootOverlay.classList.add('hidden');
+        setTimeout(function () { bootOverlay.style.display = 'none'; }, 300);
       }
     });
-  });
+  }
 
-  if (modal) {
-    modal.querySelectorAll('[data-close]').forEach(function (el) {
-      el.addEventListener('click', tutupModal);
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') tutupModal();
+  /* ---------- Particles Canvas ---------- */
+  function initParticles() {
+    var canvas = document.getElementById('particlesCanvas');
+    var overlay = document.getElementById('bootOverlay');
+    if (!canvas) return;
+
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+    var animationId = null;
+    var active = true;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    var colors = ['#10b981', '#34d399', '#059669', '#67e8f9', '#a7f3d0'];
+
+    function createParticles() {
+      var count = Math.max(1, Math.min(50, Math.floor((canvas.width * canvas.height) / 15000)));
+      particles = [];
+
+      for (var i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 2 + 0.5,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          opacity: Math.random() * 0.5 + 0.2
+        });
+      }
+    }
+
+    createParticles();
+
+    function draw() {
+      if (!active) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach(function (p) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.opacity;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+      });
+
+      // Draw connections
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.15;
+      particles.forEach(function (pa) {
+        particles.forEach(function (pb) {
+          var dx = pa.x - pb.x;
+          var dy = pa.y - pb.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(pa.x, pa.y);
+            ctx.lineTo(pb.x, pb.y);
+            ctx.stroke();
+          }
+        });
+      });
+
+      animationId = requestAnimationFrame(draw);
+    }
+
+    if (!prefersReduced) {
+      draw();
+    }
+
+    // Toggle particles on boot skip / theme change
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('#bootSkip') || e.target.closest('.theme-toggle')) {
+        if (active) {
+          cancelAnimationFrame(animationId);
+          active = false;
+          if (particlesCanvas.style.opacity !== '0') {
+            particlesCanvas.style.transition = 'opacity 0.5s ease';
+            particlesCanvas.style.opacity = '0';
+          }
+        } else {
+          createParticles();
+          active = true;
+          if (particlesCanvas.style.opacity !== '1') {
+            particlesCanvas.style.transition = 'opacity 0.5s ease';
+            particlesCanvas.style.opacity = '1';
+          }
+          draw();
+        }
+      }
     });
   }
+
+  /* ---------- Counter Animation ---------- */
+  function animateCounters() {
+    var counters = document.querySelectorAll('.stat-number[data-count]');
+    if (!counters.length) return;
+
+    counters.forEach(function (counter) {
+      var target = parseInt(counter.getAttribute('data-count'));
+      var duration = 1500;
+      var start = 0;
+      var startTime = null;
+
+      if (prefersReduced) { counter.textContent = target; return; }
+
+      function updateCounter(time) {
+        if (!startTime) startTime = time;
+        var elapsed = time - startTime;
+        var progress = Math.min(elapsed / duration, 1);
+        var ease = 1 - Math.pow(1 - progress, 3);
+        var current = Math.floor(start + (target - start) * ease);
+        counter.textContent = current;
+
+        if (progress < 1) {
+          requestAnimationFrame(updateCounter);
+        }
+      }
+
+      requestAnimationFrame(updateCounter);
+    });
+  }
+
+  /* ---------- Skill Tree Interactions ---------- */
+  function initSkillTree() {
+    var skillNodes = document.querySelectorAll('.skill-branch .node-content, .skill-branch .leaf-node .node-content');
+    var skillDetail = document.getElementById('skillDetail');
+    var skillTree = document.getElementById('skillTree');
+
+    if (!skillNodes.length || !skillDetail) return;
+
+    skillNodes.forEach(function (node) {
+      node.addEventListener('click', function () {
+        var skillName = this.getAttribute('data-skill');
+        var category = this.getAttribute('data-category');
+        var level = this.getAttribute('data-level');
+
+        // Close any open nodes
+        skillNodes.forEach(function (n) { n.classList.remove('active'); });
+
+        // Open clicked node
+        this.classList.add('active');
+
+        // Show detail
+        if (skillDetail) {
+          skillDetail.innerHTML = '';
+          var detailEl = document.createElement('div');
+          detailEl.innerHTML = [
+            '<div class="skill-detail-content">',
+            '<h4>' + (skillName || '') + '</h4>',
+            '<p>' + (category ? 'Kategori: ' + category : '') + '</p>',
+            '</div>'
+          ].join('\n');
+          skillDetail.appendChild(detailEl);
+        }
+      });
+    });
+  }
+
+  /* ---------- Theme Lab Controls ---------- */
+  function initThemeLab() {
+    var accentIntensity = document.getElementById('accentIntensity');
+    var accentValue = document.getElementById('accentValue');
+    var particleDensity = document.getElementById('particleDensity');
+    var particleValue = document.getElementById('particleValue');
+    var glowIntensity = document.getElementById('glowIntensity');
+    var glowValue = document.getElementById('glowValue');
+    var reducedMotion = document.getElementById('reducedMotion');
+    var highContrast = document.getElementById('highContrast');
+    var resetTheme = document.getElementById('resetTheme');
+
+    if (!accentIntensity) return;
+
+    function applyTheme() {
+      var intensity = parseInt(accentIntensity.value);
+      var particlePct = parseInt(particleDensity.value);
+      var glowPct = parseInt(glowIntensity.value);
+
+      document.documentElement.style.setProperty('--accent-grad', 'linear-gradient(135deg, rgba(16, 185, 129, ' + (intensity / 100) + '), rgba(52, 211, 153, ' + ((intensity + 30) / 100 > 1 ? 1 : (intensity + 30) / 100) + ')');
+      document.documentElement.style.setProperty('--glow', '0 0 ' + (20 + glowPct * 0.35) + 'px rgba(16, 185, 129, ' + (intensity / 100) + ')');
+      document.documentElement.style.setProperty('--grid-line', 'rgba(16, 185, 129, ' + (intensity * 0.5 / 100 + 0.02) + ')');
+
+      if (particlesCanvas) {
+        particlesCanvas.style.opacity = particlePct / 100;
+      }
+
+      if (reducedMotion && reducedMotion.checked) {
+        document.body.classList.add('reduced-motion');
+      } else {
+        document.body.classList.remove('reduced-motion');
+      }
+
+      if (accentValue) accentValue.textContent = intensity + '%';
+      if (particleValue) particleValue.textContent = particlePct + '%';
+      if (glowValue) glowValue.textContent = glowPct + '%';
+    }
+
+    if (accentIntensity) {
+      accentIntensity.addEventListener('input', applyTheme);
+    }
+    if (particleDensity) {
+      particleDensity.addEventListener('input', applyTheme);
+    }
+    if (glowIntensity) {
+      glowIntensity.addEventListener('input', applyTheme);
+    }
+    if (reducedMotion) {
+      reducedMotion.addEventListener('change', applyTheme);
+    }
+    if (resetTheme) {
+      resetTheme.addEventListener('click', function () {
+        if (accentIntensity) accentIntensity.value = '50';
+        if (particleDensity) particleDensity.value = '30';
+        if (glowIntensity) glowIntensity.value = '60';
+        applyTheme();
+      });
+    }
+
+    applyTheme();
+  }
+
+  /* ---------- Network Lab Visualization ---------- */
+  function initNetworkLab() {
+    var networkCanvas = document.getElementById('networkCanvas');
+    var nodes = [
+      { x: 200, y: 100, label: 'CLIENT', color: '#3b82f6' },
+      { x: 600, y: 150, label: 'ROUTER', color: '#f59e0b' },
+      { x: 300, y: 350, label: 'SERVER', color: '#10b981' },
+      { x: 700, y: 350, label: 'DATABASE', color: '#8b5cf6' }
+    ];
+
+    if (!networkCanvas) return;
+
+    var canvas = networkCanvas.getContext('2d');
+    var canvasEl = networkCanvas.parentNode;
+    var resizeTimeout = null;
+
+    function resizeCanvas() {
+      var rect = canvasEl.getBoundingClientRect();
+      networkCanvas.width = rect.width;
+      networkCanvas.height = rect.height;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(resizeCanvas, 100);
+    });
+
+    function draw() {
+      canvas.clearRect(0, 0, networkCanvas.width, networkCanvas.height);
+
+      // Draw connections
+      canvas.strokeStyle = '#e2e8f0';
+      canvas.lineWidth = 1;
+      nodes.forEach(function (n1, i) {
+        nodes.forEach(function (n2) {
+          if (i < nodes.indexOf(n1)) return;
+          canvas.beginPath();
+          canvas.moveTo(n1.x, n1.y);
+          canvas.lineTo(n2.x, n2.y);
+          canvas.stroke();
+        });
+      });
+
+      // Draw nodes
+      nodes.forEach(function (n) {
+        canvas.beginPath();
+        canvas.arc(n.x, n.y, 20, 0, Math.PI * 2);
+        canvas.fillStyle = n.color;
+        canvas.shadowColor = n.color;
+        canvas.shadowBlur = 15;
+        canvas.fill();
+        canvas.shadowBlur = 0;
+
+        // Draw node border
+        canvas.beginPath();
+        canvas.arc(n.x, n.y, 16, 0, Math.PI * 2);
+        canvas.strokeStyle = '#fff';
+        canvas.lineWidth = 3;
+        canvas.stroke();
+
+        // Draw label
+        canvas.fillStyle = '#050d14';
+        canvas.font = '12px var(--font-sans)';
+        canvas.textAlign = 'center';
+        canvas.textBaseline = 'middle';
+        canvas.fillText(n.label, n.x, n.y + 30);
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  /* ---------- AJIM_AI Interface ---------- */
+  function initAIImpl() {
+    var aiInput = document.getElementById('aiInput');
+    var aiSend = document.getElementById('aiSend');
+    var aiChat = document.getElementById('aiChat');
+
+    if (!aiInput || !aiSend || !aiChat) return;
+
+    function addMessage(content, isUser) {
+      var msgEl = document.createElement('div');
+      msgEl.className = 'ai-message ' + (isUser ? 'user' : 'system');
+      msgEl.innerHTML = [
+        '<div class="msg-content">' + content + '</div>'
+      ].join('\n');
+      aiChat.insertBefore(msgEl, aiChat.lastElementChild);
+      aiChat.scrollTop = aiChat.scrollHeight;
+    }
+
+    function simulateResponse(userInput) {
+      var lower = userInput.toLowerCase();
+      var response;
+
+      if (lower.includes('project')) {
+        response = 'Saya memiliki 4 proyek utama: Panen Jamur, Mycelia Smart Farming, Sistem Penyiraman Otomatis, dan Website Profil Pribadi. Setiap proyek menggunakan teknologi berbeda seperti Flutter, Firebase, IoT, ESP32, Node.js, dan Express.';
+      } else if (lower.includes('skill')) {
+        response = 'Saya memiliki 8 teknologi yang dikuasai: Flutter/Dart, Firebase, IoT/ESP32, Node.js, Jaringan dasar, Linux, MySQL/SQLite, dan UI/UX Design. Setiap skill memiliki level kemahiran yang berbeda mulai dari 55% hingga 85%.';
+      } else if (lower.includes('ai')) {
+        response = 'AI integration untuk portfolio ini masih dalam fase placeholder. Sistem ini berjalan secara lokal tanpa API eksternal. Fitur AI sepenuhnya siap dikembangkan nanti dengan OpenAI, Anthropic, atau Firebase AI.';
+      } else if (lower.includes('about') || lower.includes('tentang')) {
+        response = 'Saya adalah Muhamad Hidayat, biasa dipanggil Ajim. Saya mahasiswa Teknik Informatika di Politeknik Hasnur dan sedang magang di Dinas Komunikasi dan Informatika Barito Kuala. Saya memiliki 5 tahun pengalaman membudidayakan jamur tiram putih dan proyek IoT yang melibatkan ESP32 dan Firebase.';
+      } else if (lower.includes('help')) {
+        response = 'Anda bisa bertanya tentang: project saya, skill saya, tentang saya, atau AI integration. Saya juga memiliki playground terminal yang bisa Anda eksplorasi dengan mengetik command seperti help, about, projects, skills, atau clear.';
+      } else {
+        response = 'Maaf, saya tidak mengerti maksud Anda. Coba ketik "help" untuk melihat command yang tersedia, atau tanyakan tentang project, skill, atau tentang saya.';
+      }
+
+      addMessage(response, false);
+      setTimeout(function () { addMessage('', true); }, 3000);
+    }
+
+    function handleInput() {
+      var value = aiInput.value.trim();
+      if (!value) return;
+
+      addMessage(value, true);
+      simulateResponse(value);
+      aiInput.value = '';
+    }
+
+    if (aiSend) {
+      aiSend.addEventListener('click', handleInput);
+    }
+
+    if (aiInput) {
+      aiInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+          handleInput();
+        }
+      });
+    }
+  }
+
+  /* ---------- Cursor Glow Effect ---------- */
+  function initCursorGlow() {
+    var cursorGlow = document.querySelector('.cursor-glow');
+    if (!cursorGlow) return;
+
+    var mouseX = 0, mouseY = 0;
+    var glowX = 0, glowY = 0;
+
+    document.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      glowX += (mouseX - glowX) * 0.15;
+      glowY += (mouseY - glowY) * 0.15;
+
+      cursorGlow.style.left = glowX - 150 + 'px';
+      cursorGlow.style.top = glowY - 150 + 'px';
+    });
+
+    // Add hover effect to interactive elements
+    var interactiveElements = document.querySelectorAll('a, button, .station-card, .tech-card, .skill-node, .artifact-card');
+    interactiveElements.forEach(function (el) {
+      el.addEventListener('mouseenter', function () {
+        cursorGlow.classList.add('active');
+      });
+      el.addEventListener('mouseleave', function () {
+        cursorGlow.classList.remove('active');
+      });
+    });
+  }
+
+  /* ---------- Easter Egg: Matrix Rain ---------- */
+  function initMatrixEasterEgg() {
+    var matrixCanvas = document.createElement('canvas');
+    matrixCanvas.id = 'matrixCanvas';
+    matrixCanvas.className = 'matrix-canvas';
+    matrixCanvas.style.cssText = 'position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: 0; visibility: hidden;';
+    document.body.appendChild(matrixCanvas);
+
+    var matrixText = '0123456789ABCDEF';
+    var columns = [];
+    var drops = [];
+
+    function resizeMatrix() {
+      matrixCanvas.width = window.innerWidth;
+      matrixCanvas.height = window.innerHeight;
+      var fontsSize = Math.floor(window.innerWidth / 50);
+      columns = [];
+      drops = [];
+
+      for (var i = 0; i < matrixCanvas.width / fontsSize; i++) {
+        columns[i] = 1;
+        drops[i] = 1;
+      }
+    }
+    resizeMatrix();
+    window.addEventListener('resize', resizeMatrix);
+
+    function drawMatrix() {
+      var ctx = matrixCanvas.getContext('2d');
+      ctx.fillStyle = 'rgba(3, 8, 12, 0.05)';
+      ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+      ctx.fillStyle = '#10b981';
+      ctx.font = '12px var(--font-mono)';
+
+      columns.forEach(function (i, index) {
+        var text = matrixText[Math.floor(Math.random() * matrixText.length)];
+        ctx.fillText(text, index * fontsSize, drops[i] * fontsSize);
+
+        if (drops[i] * fontsSize > matrixCanvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
+      });
+    }
+
+    var matrixInterval = setInterval(drawMatrix, 30);
+
+    // Toggle matrix on double-click
+    var lastClick = 0;
+    document.addEventListener('click', function (e) {
+      var now = new Date().getTime();
+      if (now - lastClick < 300) {
+        document.body.classList.toggle('matrix-active');
+        if (document.body.classList.contains('matrix-active')) {
+          matrixCanvas.style.opacity = '0.15';
+          matrixCanvas.style.visibility = 'visible';
+        } else {
+          matrixCanvas.style.opacity = '0';
+          matrixCanvas.style.visibility = 'hidden';
+        }
+      }
+      lastClick = now;
+    });
+  }
+
+  /* ---------- Initialize Everything ---------- */
+  bootSequence();
+  initParticles();
+  animateCounters();
+  initSkillTree();
+  initThemeLab();
+  initNetworkLab();
+  initAIImpl();
+  initCursorGlow();
+  initMatrixEasterEgg();
+
 })();
