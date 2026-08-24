@@ -135,7 +135,6 @@
     var bootBar = document.getElementById('bootBar');
     var bootPercent = document.getElementById('bootPercent');
     var bootSkip = document.getElementById('bootSkip');
-    var particlesCanvas = document.getElementById('particlesCanvas');
 
     if (!bootOverlay) return;
 
@@ -231,7 +230,7 @@
     resize();
     window.addEventListener('resize', resize);
 
-    var colors = ['#10b981', '#34d399', '#059669', '#67e8f9', '#a7f3d0'];
+    var colors = ['#3b82f6', '#60a5fa', '#0891b2', '#06b6d4', '#93c5fd'];
 
     function createParticles() {
       var count = Math.max(1, Math.min(50, Math.floor((canvas.width * canvas.height) / 15000)));
@@ -275,7 +274,7 @@
       });
 
       // Draw connections
-      ctx.strokeStyle = '#10b981';
+      ctx.strokeStyle = '#3b82f6';
       ctx.lineWidth = 1;
       ctx.globalAlpha = 0.15;
       particles.forEach(function (pa) {
@@ -360,11 +359,104 @@
 
     if (!skillNodes.length || !skillDetail) return;
 
+    // Skill data based on profil.keahlian
+    var skillData = {
+      'Flutter / Dart': {
+        kategori: 'Mobile Development',
+        level: 85,
+        teknologi: ['Flutter', 'Dart', 'Android'],
+        desc: 'Aplikasi mobile lintas platform dengan UI yang expressif dan performa tinggi'
+      },
+      'Firebase (Auth, Realtime DB)': {
+        kategori: 'Backend & Database',
+        level: 80,
+        teknologi: ['Firebase Auth', 'Realtime DB', 'Cloud Functions'],
+        desc: 'Autentikasi, database realtime, dan serverless functions'
+      },
+      'IoT (ESP32, Sensor, Mqtt)': {
+        kategori: 'IoT & Hardware',
+        level: 75,
+        teknologi: ['ESP32', 'Sensor', 'MQTT'],
+        desc: 'Monitoring suhu, kelembaban, penyiraman otomatis dan IoT devices'
+      },
+      'Node.js (Express)': {
+        kategori: 'Backend & Database',
+        level: 70,
+        teknologi: ['Node.js', 'Express', 'REST API'],
+        desc: 'Backend server, API development, dan microservices'
+      },
+      'Jaringan (Dasar)': {
+        kategori: 'IoT & Hardware',
+        level: 65,
+        teknologi: ['Jaringan Komputer', 'Dasar'],
+        desc: 'Konfigurasi jaringan, routing, dan infrastruktur dasar'
+      },
+      'Linux (Dasar)': {
+        kategori: 'IoT & Hardware',
+        level: 60,
+        teknologi: ['Linux Command', 'Shell Scripting'],
+        desc: 'Operasi sistem Dasar, terminal, dan pengelolaan paket'
+      },
+      'MySQL / SQLite': {
+        kategori: 'Backend & Database',
+        level: 60,
+        teknologi: ['MySQL', 'SQLite', 'Query Optimization'],
+        desc: 'Database management, querying, dan optimasi performa'
+      },
+      'UI/UX Design': {
+        kategori: 'Design',
+        level: 55,
+        teknologi: ['Figma', 'UI Design', 'UX Research'],
+        desc: 'Desain antarmuka, alur pengguna, dan prototyping'
+      }
+    };
+
+    function showSkillDetail(skillName) {
+      var data = skillData[skillName] || {
+        kategori: '-',
+        level: '0%',
+        teknologi: [],
+        desc: 'Skill tersedia di portfolio ini'
+      };
+
+      skillDetail.innerHTML = [
+        '<div class="skill-detail-content">',
+        '<div class="skill-detail-header">',
+        '<h4>' + (skillName || 'Skill') + '</h4>',
+        '<span class="skill-detail-category">' + (data.kategori || '') + '</span>',
+        '</div>',
+        '<div class="skill-detail-body">',
+        '<p>' + (data.desc || '') + '</p>',
+        '</div>',
+        '<div class="skill-detail-footer">',
+        '<span class="skill-detail-level">' + (data.level || '0%') + '</span>',
+        '</div>',
+        '</div>'
+      ].join('\n');
+
+      // Add tech tags
+      if (data.teknologi && data.teknologi.length > 0) {
+        var techTags = '<div class="skill-tech-tags">';
+        data.teknologi.forEach(function(t) {
+          techTags += '<span class="tech-chip">' + t + '</span>';
+        });
+        techTags += '</div>';
+        skillDetail.innerHTML += techTags;
+      }
+    }
+
+    function hideSkillDetail() {
+      skillDetail.innerHTML = [
+        '<div class="detail-placeholder">',
+        '<i class="fas fa-mouse-pointer"></i>',
+        '<p>Klik node skill untuk detail</p>',
+        '</div>'
+      ].join('\n');
+    }
+
     skillNodes.forEach(function (node) {
       node.addEventListener('click', function () {
         var skillName = this.getAttribute('data-skill');
-        var category = this.getAttribute('data-category');
-        var level = this.getAttribute('data-level');
 
         // Close any open nodes
         skillNodes.forEach(function (n) { n.classList.remove('active'); });
@@ -373,18 +465,24 @@
         this.classList.add('active');
 
         // Show detail
-        if (skillDetail) {
-          skillDetail.innerHTML = '';
-          var detailEl = document.createElement('div');
-          detailEl.innerHTML = [
-            '<div class="skill-detail-content">',
-            '<h4>' + (skillName || '') + '</h4>',
-            '<p>' + (category ? 'Kategori: ' + category : '') + '</p>',
-            '</div>'
-          ].join('\n');
-          skillDetail.appendChild(detailEl);
-        }
+        showSkillDetail(skillName);
       });
+    });
+
+    // Close detail when clicking outside
+    document.addEventListener('click', function (e) {
+      if (!skillDetail.contains(e.target) && !skillNodes.contains(e.target)) {
+        hideSkillDetail();
+        skillNodes.forEach(function (n) { n.classList.remove('active'); });
+      }
+    });
+
+    // Keyboard accessibility (Escape to close)
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        hideSkillDetail();
+        skillNodes.forEach(function (n) { n.classList.remove('active'); });
+      }
     });
   }
 
@@ -407,9 +505,9 @@
       var particlePct = parseInt(particleDensity.value);
       var glowPct = parseInt(glowIntensity.value);
 
-      document.documentElement.style.setProperty('--accent-grad', 'linear-gradient(135deg, rgba(16, 185, 129, ' + (intensity / 100) + '), rgba(52, 211, 153, ' + ((intensity + 30) / 100 > 1 ? 1 : (intensity + 30) / 100) + ')');
-      document.documentElement.style.setProperty('--glow', '0 0 ' + (20 + glowPct * 0.35) + 'px rgba(16, 185, 129, ' + (intensity / 100) + ')');
-      document.documentElement.style.setProperty('--grid-line', 'rgba(16, 185, 129, ' + (intensity * 0.5 / 100 + 0.02) + ')');
+      document.documentElement.style.setProperty('--accent-grad', 'linear-gradient(135deg, rgba(59, 130, 246, ' + (intensity / 100) + '), rgba(96, 165, 250, ' + ((intensity + 30) / 100 > 1 ? 1 : (intensity + 30) / 100) + ')');
+      document.documentElement.style.setProperty('--glow', '0 0 ' + (20 + glowPct * 0.35) + 'px rgba(59, 130, 246, ' + (intensity / 100) + ')');
+      document.documentElement.style.setProperty('--grid-line', 'rgba(59, 130, 246, ' + (intensity * 0.5 / 100 + 0.02) + ')');
 
       if (particlesCanvas) {
         particlesCanvas.style.opacity = particlePct / 100;
@@ -511,7 +609,7 @@
         canvas.stroke();
 
         // Draw label
-        canvas.fillStyle = '#050d14';
+        canvas.fillStyle = '#0e1a26';
         canvas.font = '12px var(--font-sans)';
         canvas.textAlign = 'center';
         canvas.textBaseline = 'middle';
@@ -649,7 +747,7 @@
       ctx.fillStyle = 'rgba(3, 8, 12, 0.05)';
       ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
 
-      ctx.fillStyle = '#10b981';
+      ctx.fillStyle = '#3b82f6';
       ctx.font = '12px var(--font-mono)';
 
       columns.forEach(function (i, index) {
