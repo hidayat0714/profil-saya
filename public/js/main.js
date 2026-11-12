@@ -173,7 +173,7 @@
           bootOverlay.classList.add('hidden');
           setTimeout(function () { bootOverlay.style.display = 'none'; }, 600);
         }
-        clearInterval(bootInterval);
+        clearInterval(progressInterval);
         clearInterval(typeInterval);
         return;
       }
@@ -201,9 +201,9 @@
       }
     }
 
-    typeInterval = setInterval(typeText, 50);
+    var typeInterval = setInterval(typeText, 50);
     bootSkip.addEventListener('click', function () {
-      clearInterval(bootInterval);
+      clearInterval(progressInterval);
       clearInterval(typeInterval);
       if (bootOverlay) {
         bootOverlay.classList.add('hidden');
@@ -471,7 +471,10 @@
 
     // Close detail when clicking outside
     document.addEventListener('click', function (e) {
-      if (!skillDetail.contains(e.target) && !skillNodes.contains(e.target)) {
+      var diDalamNode = Array.prototype.slice.call(skillNodes).some(function (n) {
+        return n === e.target || n.contains(e.target);
+      });
+      if (!skillDetail.contains(e.target) && !diDalamNode) {
         hideSkillDetail();
         skillNodes.forEach(function (n) { n.classList.remove('active'); });
       }
@@ -560,9 +563,19 @@
 
     if (!networkCanvas) return;
 
+    if (typeof networkCanvas.getContext !== 'function') {
+      var canvasEl2 = document.createElement('canvas');
+      canvasEl2.style.display = 'block';
+      canvasEl2.style.width = '100%';
+      canvasEl2.style.height = '100%';
+      networkCanvas.appendChild(canvasEl2);
+      networkCanvas = canvasEl2;
+    }
+
     var canvas = networkCanvas.getContext('2d');
     var canvasEl = networkCanvas.parentNode;
     var resizeTimeout = null;
+    var warnaLabel = (getComputedStyle(document.documentElement).getPropertyValue('--text') || '#0e1a26').trim() || '#0e1a26';
 
     function resizeCanvas() {
       var rect = canvasEl.getBoundingClientRect();
@@ -576,44 +589,54 @@
     });
 
     function draw() {
-      canvas.clearRect(0, 0, networkCanvas.width, networkCanvas.height);
+      var w = networkCanvas.width;
+      var h = networkCanvas.height;
+      canvas.clearRect(0, 0, w, h);
 
-      // Draw connections
-      canvas.strokeStyle = '#e2e8f0';
+      var sx = w / 800;
+      var sy = h / 450;
+      var s = Math.min(sx, sy);
+
+      function titik(n) {
+        return { x: n.x * sx, y: n.y * sy };
+      }
+
+      canvas.strokeStyle = '#94a3b8';
       canvas.lineWidth = 1;
-      nodes.forEach(function (n1, i) {
-        nodes.forEach(function (n2) {
-          if (i < nodes.indexOf(n1)) return;
+      for (var i = 0; i < nodes.length; i++) {
+        for (var j = i + 1; j < nodes.length; j++) {
+          var a = titik(nodes[i]);
+          var b = titik(nodes[j]);
           canvas.beginPath();
-          canvas.moveTo(n1.x, n1.y);
-          canvas.lineTo(n2.x, n2.y);
+          canvas.moveTo(a.x, a.y);
+          canvas.lineTo(b.x, b.y);
           canvas.stroke();
-        });
-      });
+        }
+      }
 
-      // Draw nodes
       nodes.forEach(function (n) {
+        var p = titik(n);
+        var r = Math.max(8, 20 * s);
+
         canvas.beginPath();
-        canvas.arc(n.x, n.y, 20, 0, Math.PI * 2);
+        canvas.arc(p.x, p.y, r, 0, Math.PI * 2);
         canvas.fillStyle = n.color;
         canvas.shadowColor = n.color;
         canvas.shadowBlur = 15;
         canvas.fill();
         canvas.shadowBlur = 0;
 
-        // Draw node border
         canvas.beginPath();
-        canvas.arc(n.x, n.y, 16, 0, Math.PI * 2);
+        canvas.arc(p.x, p.y, r * 0.8, 0, Math.PI * 2);
         canvas.strokeStyle = '#fff';
         canvas.lineWidth = 3;
         canvas.stroke();
 
-        // Draw label
-        canvas.fillStyle = '#0e1a26';
-        canvas.font = '12px var(--font-sans)';
+        canvas.fillStyle = warnaLabel;
+        canvas.font = 'bold ' + Math.max(10, Math.round(12 * s)) + 'px sans-serif';
         canvas.textAlign = 'center';
         canvas.textBaseline = 'middle';
-        canvas.fillText(n.label, n.x, n.y + 30);
+        canvas.fillText(n.label, p.x, p.y + r + 12 * s);
       });
 
       requestAnimationFrame(draw);
@@ -726,11 +749,12 @@
     var matrixText = '0123456789ABCDEF';
     var columns = [];
     var drops = [];
+    var fontsSize = 16;
 
     function resizeMatrix() {
       matrixCanvas.width = window.innerWidth;
       matrixCanvas.height = window.innerHeight;
-      var fontsSize = Math.floor(window.innerWidth / 50);
+      fontsSize = Math.max(10, Math.floor(window.innerWidth / 50));
       columns = [];
       drops = [];
 
@@ -743,12 +767,13 @@
     window.addEventListener('resize', resizeMatrix);
 
     function drawMatrix() {
+      if (!document.body.classList.contains('matrix-active')) return;
       var ctx = matrixCanvas.getContext('2d');
       ctx.fillStyle = 'rgba(3, 8, 12, 0.05)';
       ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
 
       ctx.fillStyle = '#3b82f6';
-      ctx.font = '12px var(--font-mono)';
+      ctx.font = fontsSize + 'px monospace';
 
       columns.forEach(function (i, index) {
         var text = matrixText[Math.floor(Math.random() * matrixText.length)];

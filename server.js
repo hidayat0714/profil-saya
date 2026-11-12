@@ -110,7 +110,7 @@ const profilData = {
       teknologi: ['Flutter', 'Firebase', 'Android'],
       link: '/downloads/panen-jamur.apk',
       download: true,
-      ikon: 'fas fa-mushroom',
+      ikon: 'fas fa-leaf',
       kategori: 'Mycelia',
     },
     {
