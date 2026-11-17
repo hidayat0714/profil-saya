@@ -20,7 +20,16 @@
     <i class="fab fa-whatsapp"></i>
   </a>
 
+  <script>
+    /* Jaring pengaman: sembunyikan boot overlay bila main.js gagal dimuat */
+    setTimeout(function () {
+      var o = document.getElementById('bootOverlay');
+      if (o && !o.classList.contains('hidden')) o.classList.add('hidden');
+    }, 9000);
+  </script>
+  <script src="/js/vendor/anime.umd.min.js"></script>
   <script src="/js/main.js"></script>
   <script src="/js/games.js"></script>
+  <script src="/js/motion.js"></script>
 </body>
 </html>

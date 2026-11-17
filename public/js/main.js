@@ -230,7 +230,7 @@
     resize();
     window.addEventListener('resize', resize);
 
-    var colors = ['#3b82f6', '#60a5fa', '#0891b2', '#06b6d4', '#93c5fd'];
+    var colors = ['#8b5cf6', '#a78bfa', '#e879f9', '#d946ef', '#c4b5fd'];
 
     function createParticles() {
       var count = Math.max(1, Math.min(50, Math.floor((canvas.width * canvas.height) / 15000)));
@@ -274,7 +274,7 @@
       });
 
       // Draw connections
-      ctx.strokeStyle = '#3b82f6';
+      ctx.strokeStyle = '#8b5cf6';
       ctx.lineWidth = 1;
       ctx.globalAlpha = 0.15;
       particles.forEach(function (pa) {
@@ -508,9 +508,9 @@
       var particlePct = parseInt(particleDensity.value);
       var glowPct = parseInt(glowIntensity.value);
 
-      document.documentElement.style.setProperty('--accent-grad', 'linear-gradient(135deg, rgba(59, 130, 246, ' + (intensity / 100) + '), rgba(96, 165, 250, ' + ((intensity + 30) / 100 > 1 ? 1 : (intensity + 30) / 100) + ')');
-      document.documentElement.style.setProperty('--glow', '0 0 ' + (20 + glowPct * 0.35) + 'px rgba(59, 130, 246, ' + (intensity / 100) + ')');
-      document.documentElement.style.setProperty('--grid-line', 'rgba(59, 130, 246, ' + (intensity * 0.5 / 100 + 0.02) + ')');
+      document.documentElement.style.setProperty('--accent-grad', 'linear-gradient(135deg, rgba(139, 92, 246, ' + (intensity / 100) + '), rgba(232, 121, 249, ' + ((intensity + 30) / 100 > 1 ? 1 : (intensity + 30) / 100) + '))');
+      document.documentElement.style.setProperty('--glow', '0 0 ' + (20 + glowPct * 0.35) + 'px rgba(139, 92, 246, ' + (intensity / 100) + ')');
+      document.documentElement.style.setProperty('--grid-line', 'rgba(139, 92, 246, ' + (intensity * 0.5 / 100 + 0.02) + ')');
 
       if (particlesCanvas) {
         particlesCanvas.style.opacity = particlePct / 100;
@@ -557,7 +557,7 @@
     var nodes = [
       { x: 200, y: 100, label: 'CLIENT', color: '#3b82f6' },
       { x: 600, y: 150, label: 'ROUTER', color: '#f59e0b' },
-      { x: 300, y: 350, label: 'SERVER', color: '#10b981' },
+      { x: 300, y: 350, label: 'SERVER', color: '#d946ef' },
       { x: 700, y: 350, label: 'DATABASE', color: '#8b5cf6' }
     ];
 
@@ -772,7 +772,7 @@
       ctx.fillStyle = 'rgba(3, 8, 12, 0.05)';
       ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
 
-      ctx.fillStyle = '#3b82f6';
+      ctx.fillStyle = '#a78bfa';
       ctx.font = fontsSize + 'px monospace';
 
       columns.forEach(function (i, index) {
@@ -787,7 +787,19 @@
       });
     }
 
-    var matrixInterval = setInterval(drawMatrix, 30);
+    // Interval hanya berjalan saat matrix aktif (hemat resource)
+    var matrixInterval = null;
+
+    function startMatrix() {
+      if (!matrixInterval) matrixInterval = setInterval(drawMatrix, 30);
+    }
+
+    function stopMatrix() {
+      if (matrixInterval) {
+        clearInterval(matrixInterval);
+        matrixInterval = null;
+      }
+    }
 
     // Toggle matrix on double-click
     var lastClick = 0;
@@ -798,9 +810,11 @@
         if (document.body.classList.contains('matrix-active')) {
           matrixCanvas.style.opacity = '0.15';
           matrixCanvas.style.visibility = 'visible';
+          startMatrix();
         } else {
           matrixCanvas.style.opacity = '0';
           matrixCanvas.style.visibility = 'hidden';
+          stopMatrix();
         }
       }
       lastClick = now;
