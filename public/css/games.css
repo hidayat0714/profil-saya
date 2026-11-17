@@ -227,6 +227,50 @@
   color: var(--emerald-bright);
 }
 
+/* Tombol ENTER untuk layar sentuh (keyboard HP tanpa tombol Enter) */
+.terminal-send {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  border-radius: 8px;
+  background: rgba(52, 211, 153, 0.08);
+  color: #34d399;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.terminal-send:hover {
+  background: rgba(52, 211, 153, 0.16);
+}
+
+.terminal-send:active {
+  transform: translateY(1px);
+}
+
+/* Daftar perintah bisa diketuk langsung */
+.terminal-help li {
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.terminal-help li:hover {
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.terminal-help li:active {
+  transform: translateY(1px);
+}
+
 @media (max-width: 520px) {
   .dpad {
     grid-template-columns: repeat(3, 60px);
@@ -249,5 +293,32 @@
   .tap-btn {
     padding: 18px;
     font-size: 13px;
+  }
+
+  .terminal-body {
+    padding: 14px;
+    font-size: 13px;
+  }
+
+  .input-line {
+    gap: 6px;
+  }
+
+  .input-line .terminal-prompt {
+    display: none;
+  }
+
+  /* kolom input harus jelas kelihatan & >=16px supaya iOS tidak zoom */
+  .terminal-input {
+    font-size: 16px;
+    padding: 8px 10px;
+    background: rgba(148, 163, 184, 0.12);
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 8px;
+  }
+
+  .terminal-send {
+    padding: 10px 13px;
+    font-size: 12px;
   }
 }

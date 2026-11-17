@@ -262,12 +262,16 @@
     });
   }
 
+  function submitCommand() {
+    var v = input.value;
+    input.value = '';
+    runCommand(v);
+  }
+
   input.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
       e.preventDefault();
-      var v = input.value;
-      input.value = '';
-      runCommand(v);
+      submitCommand();
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       if (histIdx > 0) { histIdx--; input.value = history[histIdx]; }
@@ -276,6 +280,34 @@
       if (histIdx < history.length - 1) { histIdx++; input.value = history[histIdx]; }
       else { histIdx = history.length; input.value = ''; }
     }
+  });
+
+  var sendBtn = document.getElementById('terminalSend');
+  if (sendBtn) {
+    sendBtn.addEventListener('click', function () {
+      if (game.active) return;
+      submitCommand();
+      scrollBottom();
+      input.focus();
+    });
+  }
+
+  if (helpEl) {
+    helpEl.addEventListener('click', function (e) {
+      var li = e.target.closest('li');
+      if (!li || !helpEl.contains(li) || game.active) return;
+      var cmdEl = li.querySelector('.cmd');
+      if (!cmdEl) return;
+      input.value = cmdEl.textContent.trim();
+      submitCommand();
+    });
+  }
+
+  input.addEventListener('focus', function () {
+    scrollBottom();
+    setTimeout(function () {
+      if (winEl.scrollIntoView) winEl.scrollIntoView({ block: 'nearest' });
+    }, 250);
   });
 
   body.addEventListener('click', function (e) {
@@ -516,7 +548,7 @@
       return;
     }
 
-    if (e.code === 'Space' || e.key === 'Enter') {
+    if (e.code === 'Space') {
       if (overlayVisible()) {
         var ae = document.activeElement;
         if (ae && ae.tagName === 'BUTTON' && game.overlay.contains(ae)) return;

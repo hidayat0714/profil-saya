@@ -3007,17 +3007,17 @@ a {
 }
 
 .terminal-prompt {
-  color: var(--emerald-bright);
+  color: #34d399;
   white-space: nowrap;
 }
 
 .terminal-text {
-  color: var(--text);
+  color: #e2e8f0;
   white-space: pre-wrap;
 }
 
 .terminal-text .cmd {
-  color: var(--emerald-bright);
+  color: #34d399;
   font-weight: 600;
 }
 
@@ -3026,7 +3026,7 @@ a {
 }
 
 .terminal-line.success .terminal-text {
-  color: var(--emerald-bright);
+  color: #34d399;
 }
 
 .input-line {
@@ -3039,16 +3039,16 @@ a {
   flex: 1;
   border: none;
   background: transparent;
-  color: var(--text);
+  color: #f8fafc;
   font-family: inherit;
   font-size: inherit;
   outline: none;
-  caret-color: var(--emerald-bright);
+  caret-color: #34d399;
 }
 
 .terminal-input::placeholder {
-  color: var(--text-muted);
-  opacity: 0.5;
+  color: #94a3b8;
+  opacity: 0.55;
 }
 
 .terminal-help {
