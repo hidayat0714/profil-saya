@@ -888,6 +888,7 @@
     var W = 360;
     var H = 220;
     var R = 14;
+    var RH = 10;
     var GW = 46;
 
     var balon = { x: 90, y: 110, vy: 0 };
@@ -895,7 +896,7 @@
     var bintang = [];
     var hidup = true;
     var mulai = false;
-    var kecepatan = 2.1;
+    var kecepatan = 1.55;
     var jedaSpawn = 0;
     var last = 0;
     var raf = null;
@@ -930,7 +931,7 @@
       gerbang = [];
       hidup = true;
       mulai = false;
-      kecepatan = 2.1;
+      kecepatan = 1.55;
       jedaSpawn = 0;
       last = 0;
       api.setScore(0);
@@ -949,13 +950,15 @@
     }
 
     function celah() {
-      return Math.max(92, 120 - game.score * 2);
+      var persen = game.score < 3 ? 0.74 : 0.66;
+      var g = Math.round(H * persen);
+      return Math.max(90, Math.min(g, H - 36));
     }
 
     function spawn() {
       var gap = celah();
-      var margin = 46;
-      var gapY = margin + Math.random() * (H - margin * 2 - gap);
+      var ruang = Math.max(0, H - gap);
+      var gapY = Math.round(ruang * (0.25 + Math.random() * 0.5));
       gerbang.push({ x: W + 10, gapY: gapY, lewat: false });
     }
 
@@ -966,7 +969,7 @@
         api.hideOverlay();
         last = 0;
       }
-      balon.vy = -7.1;
+      balon.vy = -5.8;
     }
 
     function mati(pesan) {
@@ -981,18 +984,18 @@
       var cy = Math.max(y, Math.min(balon.y, y + h));
       var dx = balon.x - cx;
       var dy = balon.y - cy;
-      return dx * dx + dy * dy < R * R;
+      return dx * dx + dy * dy < RH * RH;
     }
 
     function update(f, dt) {
-      balon.vy += 0.42 * f;
+      balon.vy += 0.3 * f;
       balon.y += balon.vy * f;
 
-      if (balon.y - R <= 0) return mati('Terlalu tinggi');
-      if (balon.y + R >= H) return mati('Jatuh ke bawah');
+      if (balon.y - RH <= 0) return mati('Terlalu tinggi');
+      if (balon.y + RH >= H) return mati('Jatuh ke bawah');
 
       jedaSpawn += dt;
-      var interval = Math.max(950, 1500 - game.score * 45);
+      var interval = Math.max(1400, 2000 - game.score * 50);
       if (jedaSpawn >= interval) {
         jedaSpawn = 0;
         spawn();
@@ -1005,7 +1008,7 @@
         if (!g.lewat && g.x + GW < balon.x) {
           g.lewat = true;
           api.setScore(game.score + 1);
-          kecepatan = Math.min(3.7, 2.1 + game.score * 0.07);
+          kecepatan = Math.min(2.5, 1.55 + game.score * 0.04);
         }
 
         if (tabrak(g.x, 0, GW, g.gapY) || tabrak(g.x, g.gapY + celah(), GW, H - g.gapY - celah())) {
