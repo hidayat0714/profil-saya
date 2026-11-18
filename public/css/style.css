@@ -4093,8 +4093,9 @@ body.reduced-motion .orbit-ring {
 }
 
 /* =========================================================
-   STAGE 2/3 — Reveal on scroll (Anime.js v4)
-   Stations, Profile, Artifacts, Skill Tree
+   STAGE 2/3/4 — Reveal on scroll (Anime.js v4)
+   Stations, Profile, Artifacts, Skill Tree, Playground,
+   AJIM_AI, Kontak, Footer
    ========================================================= */
 
 /* Jaring pengaman: bila Reduced Motion aktif, semua elemen reveal
@@ -4126,7 +4127,26 @@ body.reduced-motion #keahlian .section-title,
 body.reduced-motion #keahlian .section-desc,
 body.reduced-motion #keahlian .skill-branch,
 body.reduced-motion #keahlian .leaf-node,
-body.reduced-motion #keahlian .skill-detail {
+body.reduced-motion #keahlian .skill-detail,
+body.reduced-motion #playground .section-label,
+body.reduced-motion #playground .section-title,
+body.reduced-motion #playground .section-desc,
+body.reduced-motion #playground .playground-tabs,
+body.reduced-motion #playground .tab-btn,
+body.reduced-motion #ajim-ai .section-label,
+body.reduced-motion #ajim-ai .section-title,
+body.reduced-motion #ajim-ai .section-desc,
+body.reduced-motion #ajim-ai .ai-interface,
+body.reduced-motion #ajim-ai .ai-header,
+body.reduced-motion #ajim-ai .ai-chat,
+body.reduced-motion #ajim-ai .ai-input-area,
+body.reduced-motion #ajim-ai .ai-disclaimer,
+body.reduced-motion #kontak .section-label,
+body.reduced-motion #kontak .section-title,
+body.reduced-motion #kontak .section-desc,
+body.reduced-motion #kontak .channel-card,
+body.reduced-motion #kontak .transmission-form,
+body.reduced-motion .footer-inner {
   opacity: 1 !important;
   transform: none !important;
 }

@@ -4,6 +4,7 @@
    Tahap 1: intro global — navbar + hero
    Tahap 2: reveal on scroll — Stations + Profile
    Tahap 3: reveal on scroll — Artifacts + Skill Tree
+   Tahap 4: reveal on scroll — Playground + AJIM_AI + Kontak + Footer
    Aturan: progressive enhancement (konten tampil normal
    bila JS/Anime gagal), hormati Reduced Motion & Theme Lab.
    ========================================================= */
@@ -391,6 +392,67 @@
     });
   }
 
+  /* =========================================================
+     TAHAP 4 — reveal on scroll: Playground + AJIM_AI + Kontak + Footer
+     Catatan: panel tab tersembunyi (display:none) TIDAK disembunyikan
+     secara inline — hanya container yang dianimasikan agar pindah tab
+     tetap menampilkan panel secara normal.
+     ========================================================= */
+  function pasangTahap4() {
+    if (reducedAktif()) return;
+    if (typeof A.onScroll !== 'function') return;
+
+    var headPg = $('#playground .section-label, #playground .section-title, #playground .section-desc');
+    if (headPg.length >= 3) {
+      grupReveal('#playground .section-head', headPg, isiSectionHead);
+    }
+
+    var tabsWrap = $('#playground .playground-tabs');
+    var tabBtns = $('#playground .tab-btn');
+    var pgEls = tabsWrap.concat(tabBtns);
+    grupReveal('#playground .playground-tabs', pgEls, function (tl, els) {
+      var wrap = els.filter(function (el) { return el.classList.contains('playground-tabs'); });
+      var btns = els.filter(function (el) { return el.classList.contains('tab-btn'); });
+      if (wrap.length) tl.add(wrap, { opacity: [0, 1], y: [44, 0], duration: 700 }, 0);
+      if (btns.length) tl.add(btns, { opacity: [0, 1], y: [-14, 0], duration: 500, delay: A.stagger(70) }, 380);
+    });
+
+    var headAi = $('#ajim-ai .section-label, #ajim-ai .section-title, #ajim-ai .section-desc');
+    if (headAi.length >= 3) {
+      grupReveal('#ajim-ai .section-head', headAi, isiSectionHead);
+    }
+
+    var aiIface = $('#ajim-ai .ai-interface');
+    var aiParts = $('#ajim-ai .ai-header, #ajim-ai .ai-chat, #ajim-ai .ai-input-area, #ajim-ai .ai-disclaimer');
+    var aiEls = aiIface.concat(aiParts);
+    grupReveal('#ajim-ai .ai-interface', aiEls, function (tl, els) {
+      var box = els.filter(function (el) { return el.classList.contains('ai-interface'); });
+      var parts = els.filter(function (el) { return !el.classList.contains('ai-interface'); });
+      if (box.length) tl.add(box, { opacity: [0, 1], y: [44, 0], duration: 700 }, 0);
+      if (parts.length) tl.add(parts, { opacity: [0, 1], y: [18, 0], duration: 550, delay: A.stagger(110) }, 350);
+    });
+
+    var headKn = $('#kontak .section-label, #kontak .section-title, #kontak .section-desc');
+    if (headKn.length >= 3) {
+      grupReveal('#kontak .section-head', headKn, isiSectionHead);
+    }
+
+    var channels = $('#kontak .channel-card');
+    var form = $('#kontak .transmission-form');
+    var knEls = channels.concat(form);
+    grupReveal('#kontak .contact-grid', knEls, function (tl, els) {
+      var cards = els.filter(function (el) { return el.classList.contains('channel-card'); });
+      var frm = els.filter(function (el) { return el.classList.contains('transmission-form'); });
+      if (cards.length) tl.add(cards, { opacity: [0, 1], x: [-18, 0], duration: 550, delay: A.stagger(80) }, 0);
+      if (frm.length) tl.add(frm, { opacity: [0, 1], y: [40, 0], duration: 750 }, 300);
+    });
+
+    var footInner = $('.footer-inner');
+    grupReveal('.footer', footInner, function (tl, els) {
+      tl.add(els, { opacity: [0, 1], y: [30, 0], duration: 700 }, 0);
+    });
+  }
+
   /* ---------- Reduced Motion (Theme Lab / preferensi OS) ---------- */
   function matikanSemua() {
     hentikanFloatChips();
@@ -452,5 +514,6 @@
     pasangMagnetik();
     pasangTahap2();
     pasangTahap3();
+    pasangTahap4();
   });
 })();
