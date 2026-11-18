@@ -4093,7 +4093,8 @@ body.reduced-motion .orbit-ring {
 }
 
 /* =========================================================
-   STAGE 2 — Reveal on scroll: Stations + Profile (Anime.js v4)
+   STAGE 2/3 — Reveal on scroll (Anime.js v4)
+   Stations, Profile, Artifacts, Skill Tree
    ========================================================= */
 
 /* Jaring pengaman: bila Reduced Motion aktif, semua elemen reveal
@@ -4115,7 +4116,17 @@ body.reduced-motion #profile .education-item,
 body.reduced-motion #profile .experience-item,
 body.reduced-motion #profile .sidebar-card,
 body.reduced-motion #profile .quick-link,
-body.reduced-motion #profile .status-item {
+body.reduced-motion #profile .status-item,
+body.reduced-motion #proyek .section-label,
+body.reduced-motion #proyek .section-title,
+body.reduced-motion #proyek .section-desc,
+body.reduced-motion #proyek .artifact-card,
+body.reduced-motion #keahlian .section-label,
+body.reduced-motion #keahlian .section-title,
+body.reduced-motion #keahlian .section-desc,
+body.reduced-motion #keahlian .skill-branch,
+body.reduced-motion #keahlian .leaf-node,
+body.reduced-motion #keahlian .skill-detail {
   opacity: 1 !important;
   transform: none !important;
 }

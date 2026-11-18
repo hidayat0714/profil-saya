@@ -3,6 +3,7 @@
    Animation engine: Anime.js v4 (vendor lokal: /js/vendor/)
    Tahap 1: intro global — navbar + hero
    Tahap 2: reveal on scroll — Stations + Profile
+   Tahap 3: reveal on scroll — Artifacts + Skill Tree
    Aturan: progressive enhancement (konten tampil normal
    bila JS/Anime gagal), hormati Reduced Motion & Theme Lab.
    ========================================================= */
@@ -355,6 +356,41 @@
     pasangSidebarReveal();
   }
 
+  /* =========================================================
+     TAHAP 3 — reveal on scroll: Artifacts + Skill Tree
+     ========================================================= */
+  function pasangTahap3() {
+    if (reducedAktif()) return;
+    if (typeof A.onScroll !== 'function') return;
+
+    var headAr = $('#proyek .section-label, #proyek .section-title, #proyek .section-desc');
+    if (headAr.length >= 3) {
+      grupReveal('#proyek .section-head', headAr, isiSectionHead);
+    }
+
+    grupReveal('#proyek .artifacts-grid', $('#proyek .artifact-card'), function (tl, els) {
+      tl.add(els, { opacity: [0, 1], y: [48, 0], scale: [0.96, 1], duration: 700, delay: A.stagger(110) }, 0);
+    });
+
+    var headSk = $('#keahlian .section-label, #keahlian .section-title, #keahlian .section-desc');
+    if (headSk.length >= 3) {
+      grupReveal('#keahlian .section-head', headSk, isiSectionHead);
+    }
+
+    var branches = $('#keahlian .skill-branch');
+    var leaves = $('#keahlian .leaf-node');
+    var detail = $('#keahlian .skill-detail');
+    var els = branches.concat(leaves, detail);
+    grupReveal('#keahlian .skill-tree-container', els, function (tl, list) {
+      var b = list.filter(function (el) { return el.classList.contains('skill-branch'); });
+      var l = list.filter(function (el) { return el.classList.contains('leaf-node'); });
+      var d = list.filter(function (el) { return el.classList.contains('skill-detail'); });
+      if (d.length) tl.add(d, { opacity: [0, 1], y: [30, 0], duration: 700 }, 100);
+      if (b.length) tl.add(b, { opacity: [0, 1], y: [40, 0], duration: 650, delay: A.stagger(140) }, 0);
+      if (l.length) tl.add(l, { opacity: [0, 1], x: [-16, 0], duration: 500, delay: A.stagger(35) }, 450);
+    });
+  }
+
   /* ---------- Reduced Motion (Theme Lab / preferensi OS) ---------- */
   function matikanSemua() {
     hentikanFloatChips();
@@ -415,5 +451,6 @@
     bangunIntro();
     pasangMagnetik();
     pasangTahap2();
+    pasangTahap3();
   });
 })();
