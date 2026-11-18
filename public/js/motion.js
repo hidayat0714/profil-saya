@@ -2,6 +2,7 @@
    AJIM // DIGITAL LAB — motion.js
    Animation engine: Anime.js v4 (vendor lokal: /js/vendor/)
    Tahap 1: intro global — navbar + hero
+   Tahap 2: reveal on scroll — Stations + Profile
    Aturan: progressive enhancement (konten tampil normal
    bila JS/Anime gagal), hormati Reduced Motion & Theme Lab.
    ========================================================= */
@@ -193,9 +194,179 @@
     });
   }
 
+  /* =========================================================
+     TAHAP 2 — reveal on scroll: Stations + Profile
+     Elemen disembunyikan hanya bila Anime aktif; muncul saat
+     masuk viewport (ScrollObserver), lalu transform dibersihkan
+     agar efek hover CSS berfungsi normal.
+     ========================================================= */
+  var revealObservers = [];
+  var revealTls = [];
+  var revealTersimpan = [];
+
+  function bersihkanReveal() {
+    revealTersimpan.forEach(function (el) {
+      el.style.opacity = '';
+      bersihkanTransform(el);
+    });
+    revealTersimpan = [];
+  }
+
+  function grupReveal(hostSel, els, isiTl, onSelesai) {
+    if (!hostSel || !els || !els.length) return;
+    if (reducedAktif() || typeof A.onScroll !== 'function') return;
+    var host = document.querySelector(hostSel);
+    if (!host) return;
+
+    els.forEach(function (el) {
+      el.style.opacity = '0';
+      revealTersimpan.push(el);
+    });
+
+    var tlR = A.createTimeline({
+      autoplay: false,
+      defaults: { ease: 'out(3)', duration: 650 },
+      onComplete: function () {
+        els.forEach(function (el) {
+          bersihkanTransform(el);
+          el.style.opacity = '';
+        });
+        revealTersimpan = revealTersimpan.filter(function (x) {
+          return els.indexOf(x) === -1;
+        });
+        if (typeof onSelesai === 'function') {
+          try { onSelesai(); } catch (e) { /* abaikan */ }
+        }
+      }
+    });
+    isiTl(tlR, els);
+    revealTls.push(tlR);
+
+    var sudah = false;
+    var obs = null;
+    try {
+      obs = A.onScroll({
+        target: hostSel,
+        onEnter: function () {
+          if (sudah) return;
+          sudah = true;
+          try { tlR.play(); } catch (e) { /* abaikan */ }
+          try { if (obs) obs.revert(); } catch (e) { /* abaikan */ }
+          var i = revealObservers.indexOf(obs);
+          if (i > -1) revealObservers.splice(i, 1);
+        }
+      });
+    } catch (e) {
+      /* pendaftaran gagal: tampilkan kembali konten */
+      els.forEach(function (el) { el.style.opacity = ''; });
+      revealTersimpan = revealTersimpan.filter(function (x) {
+        return els.indexOf(x) === -1;
+      });
+      return;
+    }
+    revealObservers.push(obs);
+  }
+
+  function isiSectionHead(tl, els) {
+    if (els.length < 3) return;
+    tl.add(els[0], { opacity: [0, 1], x: [-18, 0], duration: 550 }, 0)
+      .add(els[1], { opacity: [0, 1], y: [30, 0] }, 120)
+      .add(els[2], { opacity: [0, 1], y: [20, 0], duration: 600 }, 260);
+  }
+
+  function pasangPanelReveal(idSel) {
+    var panel = document.querySelector(idSel);
+    if (!panel) return;
+    var inner = Array.prototype.slice.call(
+      panel.querySelectorAll('.data-row, .education-item, .experience-item')
+    );
+    var els = [panel].concat(inner);
+    grupReveal(idSel, els, function (tl, list) {
+      tl.add(list[0], { opacity: [0, 1], y: [36, 0] }, 0);
+      if (list.length > 1) {
+        tl.add(list.slice(1), { opacity: [0, 1], x: [-12, 0], duration: 500, delay: A.stagger(45) }, 300);
+      }
+    });
+  }
+
+  function mulaiPulseStatus() {
+    if (reducedAktif()) return;
+    $('#profile .status-dot').forEach(function (dot, i) {
+      var loop = A.animate(dot, {
+        scale: [1, 1.45],
+        opacity: [1, 0.5],
+        duration: 900 + (i % 4) * 150,
+        delay: i * 140,
+        ease: 'inOut(2)',
+        alternate: true,
+        loop: true
+      });
+      loops.push(loop);
+    });
+  }
+
+  function pasangSidebarReveal() {
+    var cards = $('#profile .profile-sidebar .sidebar-card');
+    var links = $('#profile .quick-link');
+    var stats = $('#profile .status-item');
+    var els = cards.concat(links, stats);
+    if (!els.length) return;
+    grupReveal('#profile .profile-sidebar', els, function (tl) {
+      if (cards.length) {
+        tl.add(cards, { opacity: [0, 1], y: [34, 0], delay: A.stagger(130) }, 0);
+      }
+      if (links.length) {
+        tl.add(links, { opacity: [0, 1], x: [-14, 0], duration: 500, delay: A.stagger(60) }, 500);
+      }
+      if (stats.length) {
+        tl.add(stats, { opacity: [0, 1], y: [14, 0], duration: 450, delay: A.stagger(70) }, 800);
+      }
+    }, mulaiPulseStatus);
+  }
+
+  function pasangTahap2() {
+    if (reducedAktif()) return;
+    if (typeof A.onScroll !== 'function') return;
+
+    var headSt = $('#stations .section-label, #stations .section-title, #stations .section-desc');
+    if (headSt.length >= 3) {
+      grupReveal('#stations .section-head', headSt, isiSectionHead);
+    }
+
+    var cards = $('#stations .station-card');
+    grupReveal('#stations .stations-grid', cards, function (tl, els) {
+      tl.add(els, { opacity: [0, 1], y: [44, 0], scale: [0.96, 1], delay: A.stagger(90) }, 0);
+    });
+
+    var headPr = $('#profile .section-label, #profile .section-title, #profile .section-desc');
+    if (headPr.length >= 3) {
+      grupReveal('#profile .section-head', headPr, isiSectionHead);
+    }
+
+    var hdr = $('#profile .profile-avatar, #profile .profile-info h2, #profile .profile-handle, #profile .profile-tagline');
+    if (hdr.length >= 4) {
+      grupReveal('#profile .profile-header', hdr, function (tl, els) {
+        tl.add(els[0], { opacity: [0, 1], scale: [0.9, 1], duration: 750 }, 0);
+        tl.add(els.slice(1), { opacity: [0, 1], y: [18, 0], duration: 550, delay: A.stagger(90) }, 150);
+      });
+    }
+
+    ['#panelIdentity', '#panelEducation', '#panelExperience'].forEach(pasangPanelReveal);
+    pasangSidebarReveal();
+  }
+
   /* ---------- Reduced Motion (Theme Lab / preferensi OS) ---------- */
   function matikanSemua() {
     hentikanFloatChips();
+    revealObservers.forEach(function (o) {
+      try { o.revert(); } catch (e) { /* abaikan */ }
+    });
+    revealObservers = [];
+    revealTls.forEach(function (t) {
+      try { t.complete(); } catch (e) { /* abaikan */ }
+    });
+    revealTls = [];
+    bersihkanReveal();
     if (tl) {
       try {
         tl.complete();
@@ -243,5 +414,6 @@
   tungguBoot(function () {
     bangunIntro();
     pasangMagnetik();
+    pasangTahap2();
   });
 })();

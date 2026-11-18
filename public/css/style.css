@@ -4091,3 +4091,31 @@ body.reduced-motion .hero-scroll,
 body.reduced-motion .orbit-ring {
   animation: none !important;
 }
+
+/* =========================================================
+   STAGE 2 — Reveal on scroll: Stations + Profile (Anime.js v4)
+   ========================================================= */
+
+/* Jaring pengaman: bila Reduced Motion aktif, semua elemen reveal
+   dipaksa tampil penuh (JS juga membersihkan opacity inline-nya) */
+body.reduced-motion #stations .section-label,
+body.reduced-motion #stations .section-title,
+body.reduced-motion #stations .section-desc,
+body.reduced-motion #stations .station-card,
+body.reduced-motion #profile .section-label,
+body.reduced-motion #profile .section-title,
+body.reduced-motion #profile .section-desc,
+body.reduced-motion #profile .profile-avatar,
+body.reduced-motion #profile .profile-info h2,
+body.reduced-motion #profile .profile-handle,
+body.reduced-motion #profile .profile-tagline,
+body.reduced-motion #profile .profile-panel,
+body.reduced-motion #profile .data-row,
+body.reduced-motion #profile .education-item,
+body.reduced-motion #profile .experience-item,
+body.reduced-motion #profile .sidebar-card,
+body.reduced-motion #profile .quick-link,
+body.reduced-motion #profile .status-item {
+  opacity: 1 !important;
+  transform: none !important;
+}
