@@ -57,16 +57,26 @@
   var navToggle = document.getElementById('navToggle');
   var navMenu = document.getElementById('navMenu');
 
+  function setIkonToggle(buka) {
+    if (!navToggle) return;
+    navToggle.innerHTML = buka ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+  }
+
   function tutupMenu() {
+    if (!navMenu || !navToggle) return;
     navMenu.classList.remove('buka');
     navToggle.setAttribute('aria-expanded', 'false');
+    setIkonToggle(false);
   }
 
   if (navToggle && navMenu) {
-    navToggle.addEventListener('click', function () {
+    navToggle.addEventListener('click', function (e) {
+      /* stopPropagation: penggantian innerHTML ikon melepas node target,
+         sehingga handler document di bawah akan salah menutup menu */
+      e.stopPropagation();
       var buka = navMenu.classList.toggle('buka');
       navToggle.setAttribute('aria-expanded', buka ? 'true' : 'false');
-      navToggle.innerHTML = buka ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+      setIkonToggle(buka);
     });
 
     navMenu.querySelectorAll('a').forEach(function (link) {
@@ -82,30 +92,134 @@
 
   /* ---------- Scrollspy: highlight link aktif ---------- */
   var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
-  var sections = navLinks
+  var spyItems = navLinks
     .map(function (l) {
       var id = l.getAttribute('href');
-      return id ? document.querySelector(id) : null;
+      var el = id ? document.querySelector(id) : null;
+      return el ? { link: l, el: el } : null;
     })
     .filter(Boolean);
+
+  /* Offset garis nav: scroll-padding (nav-h+12) + scroll-margin section
+     (nav-h+8) = 164px saat nav-h 72px — posisi section saat anchor di-klik */
+  var SPY_OFFSET = 164;
 
   var spyTimer = null;
   function cekScrollspy() {
     if (spyTimer) return;
     spyTimer = setTimeout(function () {
-      var pos = (window.scrollY || 0) + 140;
-      var aktifId = 'beranda';
-      sections.forEach(function (s) {
-        if (s.offsetTop <= pos) aktifId = s.getAttribute('id');
-      });
-      navLinks.forEach(function (l) {
-        l.classList.toggle('active', l.getAttribute('href') === '#' + aktifId);
-      });
       spyTimer = null;
+      if (!spyItems.length) return;
+
+      /* Urutkan berdasar posisi dokumen — urutan nav bisa beda dengan
+         urutan section (overwrite salah bila pakai urutan array) */
+      var items = spyItems.slice().sort(function (a, b) {
+        var ra = a.el.getBoundingClientRect();
+        var rb = b.el.getBoundingClientRect();
+        return (ra.top + window.scrollY) - (rb.top + window.scrollY);
+      });
+
+      var atBottom = (window.scrollY + window.innerHeight) >= (document.documentElement.scrollHeight - 6);
+      var aktif = atBottom ? items[items.length - 1] : items[0];
+      if (!atBottom) {
+        for (var i = 0; i < items.length; i++) {
+          /* +2px toleransi subpixel saat anchor mendarat tepat di SPY_OFFSET */
+          if (items[i].el.getBoundingClientRect().top <= SPY_OFFSET + 2) aktif = items[i];
+        }
+      }
+
+      navLinks.forEach(function (l) {
+        l.classList.toggle('active', l === aktif.link);
+      });
     }, 80);
   }
   window.addEventListener('scroll', cekScrollspy, { passive: true });
   cekScrollspy();
+
+  /* ---------- Modal detail proyek ---------- */
+  var modal = document.getElementById('proyekModal');
+  var modalDataEl = document.getElementById('proyek-data');
+  var proyekData = [];
+  if (modalDataEl) {
+    try {
+      proyekData = JSON.parse(modalDataEl.textContent);
+    } catch (e) { /* abaikan */ }
+  }
+
+  var terakhirFokus = null;
+
+  function isiModal(idx) {
+    var p = proyekData[idx];
+    if (!p) return;
+
+    document.getElementById('modalIkon').className = p.ikon;
+    document.getElementById('modalKategori').textContent = (p.kategori === 'Mycelia' ? 'Mycelia Ecosystem' : p.kategori);
+    document.getElementById('modalTitle').textContent = p.nama;
+    document.getElementById('modalDesk').textContent = p.deskripsi;
+
+    var techEl = document.getElementById('modalTech');
+    techEl.innerHTML = '';
+    (p.teknologi || []).forEach(function (t) {
+      var s = document.createElement('span');
+      s.className = 'tag';
+      s.textContent = t;
+      techEl.appendChild(s);
+    });
+
+    var linksEl = document.getElementById('modalLinks');
+    linksEl.innerHTML = '';
+    if (p.download) {
+      var aDl = document.createElement('a');
+      aDl.className = 'btn btn-primary btn-sm';
+      aDl.href = p.link;
+      aDl.setAttribute('download', '');
+      aDl.innerHTML = '<i class="fas fa-download"></i> Download APK';
+      linksEl.appendChild(aDl);
+    }
+    if (p.link && p.link !== '#') {
+      var aLi = document.createElement('a');
+      aLi.className = 'btn btn-ghost btn-sm';
+      aLi.href = p.link;
+      aLi.target = '_blank';
+      aLi.rel = 'noopener';
+      aLi.innerHTML = '<i class="fas fa-arrow-right"></i> Kunjungi';
+      linksEl.appendChild(aLi);
+    }
+  }
+
+  function bukaModal(idx) {
+    if (!modal || !proyekData.length) return;
+    isiModal(idx);
+    terakhirFokus = document.activeElement;
+    modal.classList.add('buka');
+    document.body.style.overflow = 'hidden';
+    var closeBtn = modal.querySelector('.modal-close');
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function tutupModal() {
+    if (!modal) return;
+    modal.classList.remove('buka');
+    document.body.style.overflow = '';
+    if (terakhirFokus && terakhirFokus.focus) terakhirFokus.focus();
+  }
+
+  document.querySelectorAll('.artifact-card').forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      /* biarkan link Download/View di dalam kartu bekerja */
+      if (e.target.closest('a')) return;
+      bukaModal(parseInt(card.getAttribute('data-artifact'), 10));
+    });
+  });
+
+  if (modal) {
+    modal.querySelectorAll('[data-close]').forEach(function (el) {
+      el.addEventListener('click', tutupModal);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') tutupModal();
+    });
+  }
 
   /* ---------- Tahun otomatis footer ---------- */
   var tahunEl = document.getElementById('tahun');
