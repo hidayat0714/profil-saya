@@ -197,6 +197,116 @@
   }
 
   /* =========================================================
+     3D PARALLAX — lapisan kedalaman di hero (data-depth)
+     Mouse: setiap layer bergeser beda jauh (dekat = banyak).
+     Scroll: offset vertikal per-lapisan (--sy).
+     Tilt: rotate halus .hero-inner dengan perspective.
+     Hormati Reduced Motion; CSS `translate` terpisah dari
+     animasi Anime (`transform`/`translate` inline pada child).
+     ========================================================= */
+  var parallaxRaf = null;
+  var parallaxAktif = false;
+  var pxTarget = { x: 0, y: 0 };
+  var pxCurrent = { x: 0, y: 0 };
+
+  function kedalaman(el) {
+    var d = parseFloat(el.getAttribute('data-depth'));
+    return isNaN(d) ? 0 : d;
+  }
+
+  function terapkanParallax() {
+    pxCurrent.x += (pxTarget.x - pxCurrent.x) * 0.075;
+    pxCurrent.y += (pxTarget.y - pxCurrent.y) * 0.075;
+
+    $('.px-layer').forEach(function (el) {
+      var d = kedalaman(el);
+      el.style.setProperty('--px', (pxCurrent.x * d * 90).toFixed(2) + 'px');
+      el.style.setProperty('--py', (pxCurrent.y * d * 90).toFixed(2) + 'px');
+    });
+
+    var inner = document.querySelector('.hero-inner');
+    if (inner && mqFine.matches) {
+      inner.style.transform =
+        'rotateY(' + (pxCurrent.x * 3.5).toFixed(2) + 'deg) rotateX(' +
+        (-pxCurrent.y * 2.5).toFixed(2) + 'deg)';
+    }
+
+    if (Math.abs(pxTarget.x - pxCurrent.x) > 0.001 ||
+        Math.abs(pxTarget.y - pxCurrent.y) > 0.001) {
+      parallaxRaf = requestAnimationFrame(terapkanParallax);
+    } else {
+      parallaxRaf = null;
+      parallaxAktif = false;
+    }
+  }
+
+  function jadwalParallax() {
+    if (parallaxAktif || reducedAktif()) return;
+    parallaxAktif = true;
+    parallaxRaf = requestAnimationFrame(terapkanParallax);
+  }
+
+  function bersihkanParallax3D() {
+    if (parallaxRaf) {
+      cancelAnimationFrame(parallaxRaf);
+      parallaxRaf = null;
+    }
+    parallaxAktif = false;
+    pxTarget.x = 0;
+    pxTarget.y = 0;
+    pxCurrent.x = 0;
+    pxCurrent.y = 0;
+    $('.px-layer').forEach(function (el) {
+      el.style.removeProperty('--px');
+      el.style.removeProperty('--py');
+      el.style.removeProperty('--sy');
+    });
+    var inner = document.querySelector('.hero-inner');
+    if (inner) inner.style.transform = '';
+  }
+
+  function pasangParallax3D() {
+    var hero = document.querySelector('.hero');
+    if (!hero || !$('.px-layer').length) return;
+
+    /* Mouse (hanya pointer halus) */
+    if (mqFine.matches) {
+      hero.addEventListener('mousemove', function (e) {
+        if (reducedAktif()) return;
+        var r = hero.getBoundingClientRect();
+        pxTarget.x = ((e.clientX - r.left) / r.width - 0.5) * 2;
+        pxTarget.y = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        jadwalParallax();
+      });
+      hero.addEventListener('mouseleave', function () {
+        pxTarget.x = 0;
+        pxTarget.y = 0;
+        jadwalParallax();
+      });
+    }
+
+    /* Scroll — offset vertikal per kedalaman */
+    var scrollRaf = false;
+    function onScrollParallax() {
+      if (reducedAktif() || scrollRaf) return;
+      scrollRaf = true;
+      requestAnimationFrame(function () {
+        scrollRaf = false;
+        if (reducedAktif()) return;
+        var r = hero.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > window.innerHeight) return;
+        var progress = -r.top / (r.height || 1);
+        $('.px-layer').forEach(function (el) {
+          var d = kedalaman(el);
+          el.style.setProperty('--sy', (progress * d * -110).toFixed(2) + 'px');
+        });
+      });
+    }
+    window.addEventListener('scroll', onScrollParallax, { passive: true });
+    onScrollParallax();
+  }
+
+  /* =========================================================
      TAHAP 2 — reveal on scroll: Stations + Profile
      Elemen disembunyikan hanya bila Anime aktif; muncul saat
      masuk viewport (ScrollObserver), lalu transform dibersihkan
@@ -456,6 +566,7 @@
   /* ---------- Reduced Motion (Theme Lab / preferensi OS) ---------- */
   function matikanSemua() {
     hentikanFloatChips();
+    bersihkanParallax3D();
     revealObservers.forEach(function (o) {
       try { o.revert(); } catch (e) { /* abaikan */ }
     });
@@ -512,6 +623,7 @@
   tungguBoot(function () {
     bangunIntro();
     pasangMagnetik();
+    pasangParallax3D();
     pasangTahap2();
     pasangTahap3();
     pasangTahap4();

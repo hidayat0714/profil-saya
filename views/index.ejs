@@ -2,8 +2,13 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero" id="beranda">
+    <div class="hero-depth" aria-hidden="true">
+      <div class="depth-grid px-layer" data-depth="0.015"></div>
+      <div class="depth-orb depth-orb-1 px-layer" data-depth="0.045"></div>
+      <div class="depth-orb depth-orb-2 px-layer" data-depth="0.075"></div>
+    </div>
     <div class="container hero-inner">
-      <div class="hero-text">
+      <div class="hero-text px-layer" data-depth="0.03">
         <div class="hero-badge">
           <span class="hero-tag">AJIM // DIGITAL LAB</span>
           <span class="hero-divider" aria-hidden="true"></span>
@@ -38,14 +43,17 @@
       </div>
 
       <div class="hero-visual">
-        <div class="avatar-wrap">
+        <div class="hero-glow px-layer" data-depth="0.02" aria-hidden="true"></div>
+        <div class="orbit-ring orbit-ring-1 px-layer" data-depth="0.05" aria-hidden="true"></div>
+        <div class="orbit-ring orbit-ring-2 px-layer" data-depth="0.08" aria-hidden="true"></div>
+        <div class="avatar-wrap px-layer" data-depth="0.11">
           <img src="/images/foto-ajim.jpeg" alt="Foto <%= profil.nama %>" class="avatar-img" loading="eager" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-inisial',textContent:'<%= profil.nama.split(' ').map(function(w){ return w[0] }).join('') %>'}))" />
         </div>
-        <div class="orbit-ring" aria-hidden="true"></div>
-        <div class="orbit-ring orbit-ring-2" aria-hidden="true"></div>
-        <div class="float-chip chip-1"><i class="fab fa-flutter"></i> Flutter</div>
-        <div class="float-chip chip-2"><i class="fas fa-microchip"></i> IoT</div>
-        <div class="float-chip chip-3"><i class="fab fa-node-js"></i> Node.js</div>
+        <div class="chip-layer px-layer" data-depth="0.15">
+          <div class="float-chip chip-1"><i class="fab fa-flutter"></i> Flutter</div>
+          <div class="float-chip chip-2"><i class="fas fa-microchip"></i> IoT</div>
+          <div class="float-chip chip-3"><i class="fab fa-node-js"></i> Node.js</div>
+        </div>
       </div>
     </div>
     <a href="#stations" class="hero-scroll" aria-label="Explore stations"><i class="fas fa-chevron-down"></i></a>
