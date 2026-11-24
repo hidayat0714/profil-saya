@@ -473,34 +473,39 @@
           <span class="section-label">06 / Intelligence</span>
           <h2 class="section-title">AJIM_AI</h2>
         </div>
-        <p class="section-desc">Experimental conversational interface — placeholder architecture</p>
+        <p class="section-desc">Asisten AI yang mengenal isi portofolio ini</p>
       </div>
 
       <div class="ai-interface">
         <div class="ai-header">
           <div class="ai-status">
-            <span class="status-indicator offline"></span>
-            <span>AJIM_AI v0.1 — Offline Mode</span>
+            <span class="status-indicator offline" id="aiStatusDot"></span>
+            <span id="aiStatusText">AJIM_AI v1.0 — Connecting…</span>
           </div>
-          <div class="ai-model">Model: Local Rule-Based (No API)</div>
+          <div class="ai-model" id="aiModelLabel">Model: —</div>
         </div>
         <div class="ai-chat" id="aiChat">
           <div class="ai-message system">
             <div class="msg-avatar"><i class="fas fa-robot"></i></div>
             <div class="msg-content">
-              <p>System initialized. Backend AI integration not configured.</p>
-              <p>This is a placeholder interface ready for future API integration.</p>
-              <p>Try asking: "What projects have you built?" or "Tell me about your skills"</p>
+              <p>Halo! Saya <strong>AJIM_AI</strong> — asisten yang sudah hafal isi portofolio ini.</p>
+              <p>Tanya saya soal <strong>proyek</strong>, <strong>keahlian</strong>, <strong>pengalaman</strong>, atau <strong>cara kontak</strong>. Jawaban saya bisa langsung membuka detailnya.</p>
             </div>
           </div>
         </div>
+        <div class="ai-chips" id="aiChips" aria-label="Pertanyaan cepat">
+          <button type="button" class="ai-chip" data-q="Apa saja proyek kamu?">Proyek apa saja?</button>
+          <button type="button" class="ai-chip" data-q="Keahlian kamu apa saja?">Keahlian</button>
+          <button type="button" class="ai-chip" data-q="Ceritakan tentang pengalaman kamu">Pengalaman</button>
+          <button type="button" class="ai-chip" data-q="Bagaimana cara menghubungi kamu?">Kontak</button>
+        </div>
         <div class="ai-input-area">
-          <input type="text" id="aiInput" placeholder="Ask something about this portfolio..." autocomplete="off" />
+          <input type="text" id="aiInput" placeholder="Tanya apa saja tentang portofolio ini…" autocomplete="off" />
           <button class="btn btn-primary" id="aiSend"><i class="fas fa-paper-plane"></i></button>
         </div>
         <div class="ai-disclaimer">
           <i class="fas fa-info-circle"></i>
-          <span>AI responses are simulated locally. No external API calls are made.</span>
+          <span id="aiDisclaimer">Jawaban AI menggunakan data portofolio ini. Bila AI tidak tersedia, mode lokal aktif otomatis.</span>
         </div>
       </div>
     </div>
@@ -568,20 +573,26 @@
   <!-- ============ MODAL DETAIL PROYEK ============ -->
   <div class="modal" id="proyekModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-backdrop" data-close></div>
-    <div class="modal-dialog">
-      <button class="modal-close" data-close aria-label="Close detail"><i class="fas fa-times"></i></button>
-      <div class="modal-header">
-        <div class="modal-media"><i class="fas fa-code" id="modalIkon"></i></div>
-        <div class="modal-meta">
-          <div class="modal-kategori" id="modalKategori"></div>
-          <h3 id="modalTitle"></h3>
+      <div class="modal-dialog">
+        <button class="modal-close" data-close aria-label="Close detail"><i class="fas fa-times"></i></button>
+        <div class="modal-header">
+          <div class="modal-media"><i class="fas fa-code" id="modalIkon"></i></div>
+          <div class="modal-meta">
+            <div class="modal-kategori" id="modalKategori"></div>
+            <h3 id="modalTitle"></h3>
+            <div class="modal-submeta" id="modalSubmeta"></div>
+          </div>
         </div>
+        <p class="md-desc" id="modalDesk"></p>
+        <div id="modalFiturWrap" hidden>
+          <div class="md-sub">Fitur Unggulan</div>
+          <ul class="md-fitur" id="modalFitur"></ul>
+        </div>
+        <div class="md-meta-rows" id="modalMetaRows"></div>
+        <div class="md-sub">Tech Stack</div>
+        <div class="tech-tags" id="modalTech"></div>
+        <div class="modal-links" id="modalLinks"></div>
       </div>
-      <p class="md-desc" id="modalDesk"></p>
-      <div class="md-sub">Tech Stack</div>
-      <div class="tech-tags" id="modalTech"></div>
-      <div class="modal-links" id="modalLinks"></div>
-    </div>
   </div>
 
   <!-- ============ SKILL DETAIL MODAL ============ -->

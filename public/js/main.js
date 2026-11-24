@@ -155,7 +155,46 @@
     document.getElementById('modalIkon').className = p.ikon;
     document.getElementById('modalKategori').textContent = (p.kategori === 'Mycelia' ? 'Mycelia Ecosystem' : p.kategori);
     document.getElementById('modalTitle').textContent = p.nama;
-    document.getElementById('modalDesk').textContent = p.deskripsi;
+    document.getElementById('modalDesk').textContent = p.deskripsiPanjang || p.deskripsi;
+
+    /* Sub-meta: tahun + status */
+    var sub = document.getElementById('modalSubmeta');
+    if (sub) {
+      var bits = [];
+      if (p.tahun) bits.push('<span class="md-chip"><i class="fas fa-calendar"></i> ' + escapeHtmlModal(p.tahun) + '</span>');
+      if (p.status) bits.push('<span class="md-chip"><i class="fas fa-circle-check"></i> ' + escapeHtmlModal(p.status) + '</span>');
+      sub.innerHTML = bits.join(' ');
+      sub.hidden = !bits.length;
+    }
+
+    /* Fitur unggulan */
+    var fiturWrap = document.getElementById('modalFiturWrap');
+    var fiturEl = document.getElementById('modalFitur');
+    if (fiturWrap && fiturEl) {
+      if (p.fitur && p.fitur.length) {
+        fiturEl.innerHTML = p.fitur.map(function (f) {
+          return '<li>' + escapeHtmlModal(f) + '</li>';
+        }).join('');
+        fiturWrap.hidden = false;
+      } else {
+        fiturEl.innerHTML = '';
+        fiturWrap.hidden = true;
+      }
+    }
+
+    /* Meta rows: peran + tantangan */
+    var metaEl = document.getElementById('modalMetaRows');
+    if (metaEl) {
+      var rows = '';
+      if (p.peran) {
+        rows += '<div class="md-row"><span class="md-row-label">Peran</span><span class="md-row-value">' + escapeHtmlModal(p.peran) + '</span></div>';
+      }
+      if (p.tantangan) {
+        rows += '<div class="md-row"><span class="md-row-label">Tantangan</span><span class="md-row-value">' + escapeHtmlModal(p.tantangan) + '</span></div>';
+      }
+      metaEl.innerHTML = rows;
+      metaEl.hidden = !rows;
+    }
 
     var techEl = document.getElementById('modalTech');
     techEl.innerHTML = '';
@@ -185,6 +224,12 @@
       aLi.innerHTML = '<i class="fas fa-arrow-right"></i> Kunjungi';
       linksEl.appendChild(aLi);
     }
+  }
+
+  function escapeHtmlModal(str) {
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
   function bukaModal(idx) {
@@ -479,49 +524,49 @@
         kategori: 'Mobile Development',
         level: 85,
         teknologi: ['Flutter', 'Dart', 'Android'],
-        desc: 'Aplikasi mobile lintas platform dengan UI yang expressif dan performa tinggi'
+        desc: 'Membangun aplikasi multi-platform dari satu codebase. Dipakai untuk Panen Jamur dan Mycelia Smart Farming.'
       },
       'Firebase (Auth, Realtime DB)': {
         kategori: 'Backend & Database',
         level: 80,
-        teknologi: ['Firebase Auth', 'Realtime DB', 'Cloud Functions'],
-        desc: 'Autentikasi, database realtime, dan serverless functions'
+        teknologi: ['Firebase Auth', 'Realtime DB', 'Cloud Firestore'],
+        desc: 'Autentikasi dan database realtime tanpa backend custom — dipakai di 3 proyek IoT/mobile.'
       },
       'IoT (ESP32, Sensor, Mqtt)': {
         kategori: 'IoT & Hardware',
         level: 75,
-        teknologi: ['ESP32', 'Sensor', 'MQTT'],
-        desc: 'Monitoring suhu, kelembaban, penyiraman otomatis dan IoT devices'
+        teknologi: ['ESP32', 'Sensor Suhu/Kelembaban', 'MQTT'],
+        desc: 'Integrasi sensor dengan ESP32, protokol MQTT, dan kontrol aktuator untuk budidaya jamur.'
       },
       'Node.js (Express)': {
         kategori: 'Backend & Database',
         level: 70,
-        teknologi: ['Node.js', 'Express', 'REST API'],
-        desc: 'Backend server, API development, dan microservices'
+        teknologi: ['Node.js', 'Express', 'REST API', 'EJS'],
+        desc: 'Backend web dengan Express — routing, REST API, dan template EJS. Website ini sendiri dibangun dengannya.'
       },
       'Jaringan (Dasar)': {
         kategori: 'IoT & Hardware',
         level: 65,
-        teknologi: ['Jaringan Komputer', 'Dasar'],
-        desc: 'Konfigurasi jaringan, routing, dan infrastruktur dasar'
+        teknologi: ['TCP/IP', 'Subnetting', 'Topologi Jaringan'],
+        desc: 'Dasar-diasi jaringan komputer — dipelajari saat magang di Diskominfo Barito Kuala.'
       },
       'Linux (Dasar)': {
         kategori: 'IoT & Hardware',
         level: 60,
-        teknologi: ['Linux Command', 'Shell Scripting'],
-        desc: 'Operasi sistem Dasar, terminal, dan pengelolaan paket'
+        teknologi: ['Terminal Linux', 'Manajemen Paket', 'Konfigurasi Server'],
+        desc: 'Navigasi terminal dan manajemen paket Linux — dipakai sehari-hari saat magang.'
       },
       'MySQL / SQLite': {
         kategori: 'Backend & Database',
         level: 60,
         teknologi: ['MySQL', 'SQLite', 'Query Optimization'],
-        desc: 'Database management, querying, dan optimasi performa'
+        desc: 'Perancangan dan kueri relasional untuk penyimpanan data terstruktur.'
       },
       'UI/UX Design': {
         kategori: 'Design',
         level: 55,
         teknologi: ['Figma', 'UI Design', 'UX Research'],
-        desc: 'Desain antarmuka, alur pengguna, dan prototyping'
+        desc: 'Perancangan antarmuka mobile & web — wireframe, hierarki visual, dan alur pengguna.'
       }
     };
 
@@ -570,7 +615,9 @@
 
     skillNodes.forEach(function (node) {
       node.addEventListener('click', function () {
-        var skillName = this.getAttribute('data-skill');
+        /* data-skill ada di parent .leaf-node, bukan di .node-content */
+        var leaf = this.closest('[data-skill]');
+        var skillName = leaf ? leaf.getAttribute('data-skill') : this.getAttribute('data-skill');
 
         // Close any open nodes
         skillNodes.forEach(function (n) { n.classList.remove('active'); });
@@ -579,7 +626,7 @@
         this.classList.add('active');
 
         // Show detail
-        showSkillDetail(skillName);
+        if (skillName) showSkillDetail(skillName);
       });
     });
 
@@ -764,59 +811,182 @@
     var aiInput = document.getElementById('aiInput');
     var aiSend = document.getElementById('aiSend');
     var aiChat = document.getElementById('aiChat');
+    var aiChips = document.getElementById('aiChips');
+    var statusDot = document.getElementById('aiStatusDot');
+    var statusText = document.getElementById('aiStatusText');
+    var modelLabel = document.getElementById('aiModelLabel');
 
     if (!aiInput || !aiSend || !aiChat) return;
 
-    function addMessage(content, isUser) {
-      var msgEl = document.createElement('div');
-      msgEl.className = 'ai-message ' + (isUser ? 'user' : 'system');
-      msgEl.innerHTML = [
-        '<div class="msg-content">' + content + '</div>'
-      ].join('\n');
-      aiChat.insertBefore(msgEl, aiChat.lastElementChild);
-      aiChat.scrollTop = aiChat.scrollHeight;
+    var riwayat = [];   // [{role:'user'|'model', text}]
+    var sibuk = false;
+
+    /* --- Status LED dari server --- */
+    fetch('/api/ai/status')
+      .then(function (r) { return r.json(); })
+      .then(function (s) {
+        if (statusDot) statusDot.className = 'status-indicator ' + (s.online ? 'online' : 'offline');
+        if (statusText) statusText.textContent = 'AJIM_AI v1.0 — ' + (s.online ? 'Online (Gemini)' : 'Local Mode');
+        if (modelLabel) modelLabel.textContent = 'Model: ' + (s.online ? s.model : 'Local Rule-Based');
+      })
+      .catch(function () {
+        if (statusText) statusText.textContent = 'AJIM_AI v1.0 — Local Mode';
+      });
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
-    function simulateResponse(userInput) {
-      var lower = userInput.toLowerCase();
-      var response;
+    function addMessage(contentHtml, isUser) {
+      var msgEl = document.createElement('div');
+      msgEl.className = 'ai-message ' + (isUser ? 'user' : 'system');
+      msgEl.innerHTML =
+        (isUser ? '' : '<div class="msg-avatar"><i class="fas fa-robot"></i></div>') +
+        '<div class="msg-content">' + contentHtml + '</div>';
+      aiChat.appendChild(msgEl);
+      aiChat.scrollTop = aiChat.scrollHeight;
+      return msgEl;
+    }
 
-      if (lower.includes('project')) {
-        response = 'Saya memiliki 4 proyek utama: Panen Jamur, Mycelia Smart Farming, Sistem Penyiraman Otomatis, dan Website Profil Pribadi. Setiap proyek menggunakan teknologi berbeda seperti Flutter, Firebase, IoT, ESP32, Node.js, dan Express.';
-      } else if (lower.includes('skill')) {
-        response = 'Saya memiliki 8 teknologi yang dikuasai: Flutter/Dart, Firebase, IoT/ESP32, Node.js, Jaringan dasar, Linux, MySQL/SQLite, dan UI/UX Design. Setiap skill memiliki level kemahiran yang berbeda mulai dari 55% hingga 85%.';
-      } else if (lower.includes('ai')) {
-        response = 'AI integration untuk portfolio ini masih dalam fase placeholder. Sistem ini berjalan secara lokal tanpa API eksternal. Fitur AI sepenuhnya siap dikembangkan nanti dengan OpenAI, Anthropic, atau Firebase AI.';
-      } else if (lower.includes('about') || lower.includes('tentang')) {
-        response = 'Saya adalah Muhamad Hidayat, biasa dipanggil Ajim. Saya mahasiswa Teknik Informatika di Politeknik Hasnur dan sedang magang di Dinas Komunikasi dan Informatika Barito Kuala. Saya memiliki 5 tahun pengalaman membudidayakan jamur tiram putih dan proyek IoT yang melibatkan ESP32 dan Firebase.';
-      } else if (lower.includes('help')) {
-        response = 'Anda bisa bertanya tentang: project saya, skill saya, tentang saya, atau AI integration. Saya juga memiliki playground terminal yang bisa Anda eksplorasi dengan mengetik command seperti help, about, projects, skills, atau clear.';
-      } else {
-        response = 'Maaf, saya tidak mengerti maksud Anda. Coba ketik "help" untuk melihat command yang tersedia, atau tanyakan tentang project, skill, atau tentang saya.';
+    function addTyping() {
+      var el = document.createElement('div');
+      el.className = 'ai-message system typing';
+      el.innerHTML =
+        '<div class="msg-avatar"><i class="fas fa-robot"></i></div>' +
+        '<div class="msg-content"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
+      aiChat.appendChild(el);
+      aiChat.scrollTop = aiChat.scrollHeight;
+      return el;
+    }
+
+    /* --- Tombol aksi hasil AI --- */
+    function renderAksi(aksi) {
+      if (!aksi || !aksi.length) return null;
+      var wrap = document.createElement('div');
+      wrap.className = 'ai-actions';
+      aksi.forEach(function (a) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'ai-action-btn';
+        var ikon = 'fas fa-arrow-right';
+        if (a.tipe === 'openProject') ikon = 'fas fa-eye';
+        else if (a.tipe === 'gotoSkill') ikon = 'fas fa-star';
+        else if (a.tipe === 'openContact') ikon = 'fas fa-paper-plane';
+        else if (a.tipe === 'gotoSection') ikon = 'fas fa-location-arrow';
+        b.innerHTML = '<i class="' + ikon + '"></i> ' + escapeHtml(a.label || 'Buka');
+        b.addEventListener('click', function () { jalankanAksi(a); });
+        wrap.appendChild(b);
+      });
+      return wrap;
+    }
+
+    function jalankanAksi(a) {
+      if (!a) return;
+      if (a.tipe === 'openProject') {
+        var idx = parseInt(a.index, 10);
+        if (!isNaN(idx)) {
+          var card = document.querySelector('.artifact-card[data-artifact="' + idx + '"]');
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(function () { bukaModal(idx); }, 450);
+          }
+        }
+      } else if (a.tipe === 'gotoSection') {
+        var target = document.getElementById(a.section);
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      } else if (a.tipe === 'gotoSkill') {
+        var keahlian = document.getElementById('keahlian');
+        if (keahlian) keahlian.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(function () {
+          var target = (a.skill || '').toLowerCase();
+          var nodes = document.querySelectorAll('.leaf-node');
+          var best = null;
+          for (var i = 0; i < nodes.length; i++) {
+            var nama = (nodes[i].getAttribute('data-skill') || '').toLowerCase();
+            if (nama === target) { best = nodes[i]; break; }
+            if (target && (nama.indexOf(target) !== -1 || target.indexOf(nama) !== -1)) best = best || nodes[i];
+          }
+          if (!best && target) {
+            // coba kata kunci pertama
+            var kata = target.split(/[\s/(,]+/)[0];
+            for (var j = 0; j < nodes.length; j++) {
+              if ((nodes[j].getAttribute('data-skill') || '').toLowerCase().indexOf(kata) !== -1) { best = nodes[j]; break; }
+            }
+          }
+          if (best) {
+            var nc = best.querySelector('.node-content');
+            if (nc) nc.click();
+          }
+        }, 600);
+      } else if (a.tipe === 'openContact') {
+        var kontak = document.getElementById('kontak');
+        if (kontak) kontak.scrollIntoView({ behavior: 'smooth' });
       }
+    }
 
-      addMessage(response, false);
-      setTimeout(function () { addMessage('', true); }, 3000);
+    /* --- Kirim pesan ke /api/ai --- */
+    function kirimPesan(value) {
+      if (sibuk) return;
+      sibuk = true;
+      addMessage(escapeHtml(value), true);
+      riwayat.push({ role: 'user', text: value });
+      var typing = addTyping();
+      if (aiSend) aiSend.disabled = true;
+
+      fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pesan: value, riwayat: riwayat.slice(-10) }),
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          typing.remove();
+          var teks = escapeHtml(data.teks || 'Maaf, tidak ada jawaban.')
+            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+          var msgEl = addMessage('<p>' + teks + '</p>', false);
+          var aksiEl = renderAksi(data.aksi);
+          if (aksiEl) msgEl.querySelector('.msg-content').appendChild(aksiEl);
+          riwayat.push({ role: 'model', text: data.teks || '' });
+          if (data.catatan) {
+            var note = document.createElement('div');
+            note.className = 'ai-note';
+            note.textContent = data.catatan;
+            msgEl.querySelector('.msg-content').appendChild(note);
+          }
+        })
+        .catch(function () {
+          typing.remove();
+          addMessage('<p>Maaf, terjadi gangguan koneksi ke server AI. Coba lagi ya.</p>', false);
+        })
+        .finally(function () {
+          sibuk = false;
+          if (aiSend) aiSend.disabled = false;
+        });
     }
 
     function handleInput() {
       var value = aiInput.value.trim();
-      if (!value) return;
-
-      addMessage(value, true);
-      simulateResponse(value);
+      if (!value || sibuk) return;
       aiInput.value = '';
+      kirimPesan(value);
     }
 
-    if (aiSend) {
-      aiSend.addEventListener('click', handleInput);
+    /* --- Quick-reply chips --- */
+    if (aiChips) {
+      aiChips.addEventListener('click', function (e) {
+        var chip = e.target.closest('.ai-chip');
+        if (!chip || sibuk) return;
+        kirimPesan(chip.getAttribute('data-q') || chip.textContent);
+      });
     }
 
+    if (aiSend) aiSend.addEventListener('click', handleInput);
     if (aiInput) {
       aiInput.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-          handleInput();
-        }
+        if (e.key === 'Enter') handleInput();
       });
     }
   }
